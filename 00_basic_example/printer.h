@@ -1,6 +1,3 @@
-#ifndef PRINTER_H
-#define PRINTER_H
+#pragma once 
 
 void printHello();
-
-#endif // PRINTER_H
