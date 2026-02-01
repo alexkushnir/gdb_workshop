@@ -6,7 +6,7 @@ public:
     VeryImportantClass() = default;
     ~VeryImportantClass() = default;
 
-    void doSomething() 
+    void DoSomething() 
     {
         std::println("Doing something");
     }
@@ -15,10 +15,10 @@ public:
 int main()
 {
     VeryImportantClass obj;
-    obj.doSomething();
+    obj.DoSomething();
 
     VeryImportantClass obj2;
-    obj2.doSomething();
+    obj2.DoSomething();
 
     std::println("Doing something else");
     return 0;
