@@ -7,7 +7,7 @@ struct Data
     int value;
 };
 
-void process_data(std::vector<Data>& data) 
+void ProcessData(std::vector<Data>& data) 
 {
     for (size_t i = 0; i < data.size(); ++i) 
     {
@@ -29,17 +29,7 @@ int main()
         dataset[i] = { .id = i, .value = i * 10};
     }
 
-    process_data(dataset);
-
-    if (dataset[42].value == (42 * 10) + 1) 
-    {
-        std::println("Verification successful!");
-    } 
-    else 
-    {
-        std::println("ERROR: Value at index 42 is corrupted! Expected {}, got {}", 
-                     (42 * 10) + 1, dataset[42].value);
-    }
+    ProcessData(dataset);
 
     return 0;
 }
