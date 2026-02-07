@@ -9,7 +9,7 @@ void Crash(int intVar, std::string strVar)
 void CrashWrapper(int intVar, std::string strVar)
 {
     intVar++;
-    strVar += " World"; 
+    strVar += " World";
     Crash(intVar, strVar);
 }
 

@@ -2,6 +2,6 @@
 
 int main()
 {
-	PrintHello();
-	return 0;
+    PrintHello();
+    return 0;
 }

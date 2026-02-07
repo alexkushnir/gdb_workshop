@@ -2,7 +2,7 @@
 
 #include <print>
 
-namespace advanced_breakpoints 
+namespace advanced_breakpoints
 {
     void VeryImportantClass::DoSomething()
     {
@@ -11,4 +11,4 @@ namespace advanced_breakpoints
             std::println("Doing something important at {} iteration", i);
         }
     }
-}
+} // namespace advanced_breakpoints

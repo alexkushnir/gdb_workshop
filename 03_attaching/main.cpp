@@ -1,26 +1,31 @@
+#include <chrono>
 #include <print>
 #include <thread>
-#include <chrono>
 
 using namespace std::chrono_literals;
 
-void PrintFunction() {
+void PrintFunction()
+{
     std::uint64_t counter = 0;
-    while (true) {
+    while (true)
+    {
         std::println("{}: {}", std::this_thread::get_id(), ++counter);
         std::this_thread::sleep_for(1s);
     }
 }
 
-void PrintFunctioWrapper() {
+void PrintFunctioWrapper()
+{
     PrintFunction();
 }
 
-void PrintFunctionWrapperWrapper() {
+void PrintFunctionWrapperWrapper()
+{
     PrintFunctioWrapper();
 }
 
-int main() {
+int main()
+{
     volatile bool stop = false;
 
     PrintFunctionWrapperWrapper();

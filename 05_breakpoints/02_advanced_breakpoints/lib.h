@@ -1,11 +1,11 @@
-#pragma once 
+#pragma once
 
-namespace advanced_breakpoints 
+namespace advanced_breakpoints
 {
     class VeryImportantClass
     {
-        public:
-            void DoSomething();
-            void DoSomethingElse();
+    public:
+        void DoSomething();
+        void DoSomethingElse();
     };
-}
+} // namespace advanced_breakpoints

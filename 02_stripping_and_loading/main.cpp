@@ -1,26 +1,32 @@
 #include <print>
 #include <vector>
 
-#define PRINT_HELLO() auto count = 0; while (count < 10) { PrintHello(); ++count; }
+#define PRINT_HELLO()                                                                              \
+    auto count = 0;                                                                                \
+    while (count < 10)                                                                             \
+    {                                                                                              \
+        PrintHello();                                                                              \
+        ++count;                                                                                   \
+    }
 
-void PrintHello() 
+void PrintHello()
 {
     std::println("Hello, World!");
 }
 
-void InnerFunction(std::vector<int>& vec, int idx) 
+void InnerFunction(std::vector<int>& vec, int idx)
 {
-    vec[idx] = 42;  // Potential out-of-bounds crash
+    vec[idx] = 42;
 }
 
-void OuterFunction(int size) 
+void OuterFunction(int size)
 {
     std::vector<int> vec(size);
-    InnerFunction(vec, size + 1);  // Trigger crash here
+    InnerFunction(vec, size + 1);
 }
 
 int main()
 {
-	OuterFunction(10);
-	return 0;	
+    OuterFunction(10);
+    return 0;
 }

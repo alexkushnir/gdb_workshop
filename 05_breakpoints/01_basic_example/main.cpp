@@ -6,7 +6,7 @@ public:
     VeryImportantClass() = default;
     ~VeryImportantClass() = default;
 
-    void DoSomething() 
+    void DoSomething()
     {
         std::println("Doing something");
     }
