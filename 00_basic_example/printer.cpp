@@ -1,7 +1,7 @@
 #include "printer.h"
 #include <print>
 
-void printHello()
+void PrintHello()
 {
 	std::println("Hello, world!");
 }
