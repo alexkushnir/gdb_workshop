@@ -10,4 +10,5 @@ endif()
 add_library(advanced_breakpoints_lib SHARED lib.cpp)
 
 add_executable(advanced_breakpoints main.cpp)
+target_link_libraries(advanced_breakpoints PRIVATE advanced_breakpoints_lib)
 

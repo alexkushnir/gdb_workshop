@@ -1,10 +1,11 @@
 #include "lib.h"
 #include <dlfcn.h>
+#include <print>
+
+#include <filesystem>
 
 int main()
 {
-    advanced_breakpoints::VeryImportantClass veryImportantClass;
-    // veryImportantClass.DoSomething();
-    dlopen("./libadvanced_breakpoints_lib.so", RTLD_LAZY);
+    advanced_breakpoints::VeryImportantClass().DoSomething();
     return 0;
 }

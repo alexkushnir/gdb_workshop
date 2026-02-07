@@ -6,5 +6,6 @@ namespace advanced_breakpoints
     {
         public:
             void DoSomething();
+            void DoSomethingElse();
     };
 }

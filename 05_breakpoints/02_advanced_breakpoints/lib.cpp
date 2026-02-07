@@ -6,6 +6,9 @@ namespace advanced_breakpoints
 {
     void VeryImportantClass::DoSomething()
     {
-        std::println("Doing something important");
+        for (auto i = 0; i < 10co; ++i)
+        {
+            std::println("Doing something important at {} iteration", i);
+        }
     }
 }
