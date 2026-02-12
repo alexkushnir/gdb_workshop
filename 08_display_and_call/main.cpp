@@ -1,11 +1,13 @@
 #include "AReallyImportantClass.h"
 #include <print>
+#include <thread>
 
-bool g_flag = false;
+using namespace std::literals;
+std::stop_source stopSource;
 
-void DebugFunc()
+static void ThreadStopFunc()
 {
-    g_flag = true;
+    stopSource.request_stop();
 }
 
 int main()
@@ -20,9 +22,17 @@ int main()
         entry = 1;
     }
     
-    while (!g_flag)
-    {
-        std::println("Still looping...");
-    }
+    auto t = std::thread([](std::stop_token stopToken){ 
+        while (!stopToken.stop_requested())
+        {
+            std::println("Still looping...");
+            std::this_thread::sleep_for(1s);
+        }
+
+        std::println("Stop was requested");
+    }, stopSource.get_token());
+
+    t.join();
+
     return 0;
 }
