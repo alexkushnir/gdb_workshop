@@ -1,8 +1,8 @@
 #include <csignal>
-#include <print>
+#include <functional>
 #include <map>
 #include <optional>
-#include <functional>
+#include <print>
 #include <scn/scan.h>
 #include <stdexcept>
 #include <sys/wait.h>
@@ -10,7 +10,7 @@
 
 enum class Choice : int
 {
-    ThrowException,
+    ThrowException = 1,
     CatchException,
     TriggerSegfault,
     TriggerFork,
@@ -105,7 +105,7 @@ int main()
         {Choice::TriggerExec, TriggerExec},
         {Choice::Exit, [&exit](){ exit = true; }}
     };
-    
+
     while (!exit)
     {
         choice = GetUserChoice();
