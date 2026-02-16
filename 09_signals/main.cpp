@@ -1,11 +1,13 @@
 #include <csignal>
-#include <print>
+#include <functional>
 #include <map>
 #include <optional>
-#include <functional>
+#include <print>
 #include <scn/scan.h>
-#include <unistd.h>
 #include <stdlib.h>
+#include <string>
+#include <string_view>
+#include <unistd.h>
 
 enum class Choice : int
 {
@@ -18,11 +20,12 @@ enum class Choice : int
     Exit = 0
 };
 
-void signal_handler(int signum)
+void SignalHandler(int signum)
 {
     std::println("Caught signal {} ({})", signum, strsignal(signum));
-    
-    if (signum == SIGSEGV || signum == SIGFPE || signum == SIGABRT) {
+
+    if (signum == SIGSEGV || signum == SIGFPE || signum == SIGABRT)
+    {
         std::println("Exiting due to fatal signal.");
         _exit(signum);
     }
@@ -78,10 +81,19 @@ static std::optional<Choice> GetUserChoice()
     std::println("6. Trigger SIGUSR1");
     std::println("0. Exit");
 
-    if (auto result = scn::prompt<int>("Select an option: ", "{}"))
+    if (auto result = scn::prompt<std::string>("Select an option: ", "{}"))
     {
-        auto [res] = result->values();
-        return std::make_optional(Choice{res});
+        auto [input] = result->values();
+        if (auto scan_result = scn::scan<int>(input, "{}"))
+        {
+            auto [choice_val] = scan_result->values();
+            return std::make_optional(Choice{choice_val});
+        }
+        else
+        {
+            std::println(stderr, "Error: Invalid input '{}'", input);
+            return std::nullopt;
+        }
     }
     else
     {
@@ -93,28 +105,24 @@ static std::optional<Choice> GetUserChoice()
 int main()
 {
     // Register signal handlers
-    std::signal(SIGSEGV, signal_handler);
-    std::signal(SIGFPE, signal_handler);
-    std::signal(SIGINT, signal_handler);
-    std::signal(SIGTERM, signal_handler);
-    std::signal(SIGABRT, signal_handler);
-    std::signal(SIGUSR1, signal_handler);
-
+    std::signal(SIGSEGV, SignalHandler);
+    std::signal(SIGFPE, SignalHandler);
+    std::signal(SIGINT, SignalHandler);
+    std::signal(SIGTERM, SignalHandler);
+    std::signal(SIGABRT, SignalHandler);
+    std::signal(SIGUSR1, SignalHandler);
+    std::signal(SIGUSR2, SignalHandler);
     // Disable buffering for stdout so we see output before _exit in signal handlers
     std::setvbuf(stdout, nullptr, _IONBF, 0);
 
     bool exit = false;
     std::optional<Choice> choice;
     static const std::map<Choice, std::function<void()>> handlers = {
-        {Choice::TriggerSegfault, TriggerSegfault},
-        {Choice::TriggerFPE, TriggerFPE},
-        {Choice::TriggerInt, TriggerInt},
-        {Choice::TriggerTerm, TriggerTerm},
-        {Choice::TriggerAbort, TriggerAbort},
-        {Choice::TriggerUsr1, TriggerUsr1},
-        {Choice::Exit, [&exit](){ exit = true; }}
-    };
-    
+        {Choice::TriggerSegfault, TriggerSegfault}, {Choice::TriggerFPE, TriggerFPE},
+        {Choice::TriggerInt, TriggerInt},           {Choice::TriggerTerm, TriggerTerm},
+        {Choice::TriggerAbort, TriggerAbort},       {Choice::TriggerUsr1, TriggerUsr1},
+        {Choice::Exit, [&exit]() { exit = true; }}};
+
     while (!exit)
     {
         choice = GetUserChoice();
