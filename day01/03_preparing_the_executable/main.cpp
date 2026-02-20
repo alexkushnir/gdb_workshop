@@ -27,6 +27,7 @@ void OuterFunction(int size)
 
 int main()
 {
+    PRINT_HELLO();
     OuterFunction(10);
     return 0;
 }
