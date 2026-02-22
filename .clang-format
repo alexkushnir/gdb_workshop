@@ -13,3 +13,4 @@ PointerAlignment: Left
 Standard: Latest
 SortIncludes: true
 NamespaceIndentation: All
+AlwaysBreakTemplateDeclarations: true
