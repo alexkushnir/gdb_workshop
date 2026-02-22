@@ -5,22 +5,24 @@
 #include <typeinfo>
 #include <vector>
 
-template <typename T, int N> class Processor
+template <typename T, int N>
+class Processor
 {
-    std::vector<T> buffer;
-    HeavyData data;
+    std::vector<T> m_buffer;
+    HeavyData m_data;
 
 public:
-    Processor() : data("Processor<" + std::string(typeid(T).name()) + "," + std::to_string(N) + ">")
+    Processor()
+        : m_data("Processor<" + std::string(typeid(T).name()) + "," + std::to_string(N) + ">")
     {
-        buffer.reserve(N);
+        m_buffer.reserve(N);
     }
-    void process(T val)
+    void Process(T val)
     {
-        buffer.push_back(val * T(N));
+        m_buffer.push_back(val * T(N));
     }
-    void dump()
+    void Dump()
     {
-        std::print("Proc size: {}, data: {}\n", buffer.size(), data.name);
+        std::print("Proc size: {}, data: {}\n", m_buffer.size(), m_data.name);
     }
 };

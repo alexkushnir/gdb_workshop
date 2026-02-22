@@ -4,17 +4,17 @@
 
 struct HeavyData
 {
-    std::string name;
-    std::vector<double> metrics;
-    HeavyData(std::string n) : name(n), metrics(100, 3.14) {}
+    std::string m_name;
+    std::vector<double> m_metrics;
+    HeavyData(std::string n) : m_name(n), m_metrics(100, 3.14) {}
 };
 
 class HeavyUtil
 {
-    HeavyData data{"HeavyUtil"};
+    HeavyData m_data{"HeavyUtil"};
 
 public:
-    void heavy_compute()
+    void HeavyCompute()
     { /* Simulate bloat */
     }
 };

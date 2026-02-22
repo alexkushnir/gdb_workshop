@@ -24,7 +24,7 @@ int main()
     p4.dump();
 
     HeavyUtil util;
-    util.heavy_compute();
+    util.HeavyCompute();
 
     return 0;
 }

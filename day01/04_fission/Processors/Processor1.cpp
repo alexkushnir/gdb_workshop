@@ -1,9 +1,9 @@
 #include "Processor.h"
 
 // Force instantiations + unique data
-inline Processor<int, 10> p1_global;
-inline Processor<double, 20> p2_global; // Change types/N for each file
-static inline void proc1_func()
+inline Processor<int, 10> p1Global;
+inline Processor<double, 20> p2Global; // Change types/N for each file
+static inline void Proc1Func()
 {
-    p1_global.process(1);
+    p1Global.Process(1);
 }

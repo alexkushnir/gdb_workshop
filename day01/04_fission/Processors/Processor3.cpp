@@ -1,10 +1,10 @@
 #include "Processor.h"
 
-inline Processor<char, 5> p3_global1;
-inline Processor<short, 8> p3_global2;
+inline Processor<char, 5> p3Global1;
+inline Processor<short, 8> p3Global2;
 
-static inline void proc3_func()
+static inline void Proc3Func()
 {
-    p3_global1.process('A');
-    p3_global2.process(42);
+    p3Global1.Process('A');
+    p3Global2.Process(42);
 }
