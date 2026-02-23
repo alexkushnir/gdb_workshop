@@ -9,19 +9,19 @@ int main()
     Processor<char, 5> p3;
     Processor<float, 30> p4;
 
-    p1.process(42);
-    p1.process(100);
-    p2.process(3.14);
-    p2.process(2.718);
-    p3.process('A');
-    p3.process('B');
-    p4.process(1.414f);
-    p4.process(0.577f);
+    p1.Process(42);
+    p1.Process(100);
+    p2.Process(3.14);
+    p2.Process(2.718);
+    p3.Process('A');
+    p3.Process('B');
+    p4.Process(1.414f);
+    p4.Process(0.577f);
 
-    p1.dump();
-    p2.dump();
-    p3.dump();
-    p4.dump();
+    p1.Dump();
+    p2.Dump();
+    p3.Dump();
+    p4.Dump();
 
     HeavyUtil util;
     util.HeavyCompute();

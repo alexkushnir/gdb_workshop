@@ -3,20 +3,20 @@
 
 struct Data
 {
-    int id;
-    int value;
+    int m_id;
+    int m_value;
 };
 
 void ProcessData(std::vector<Data>& data)
 {
     for (size_t i = 0; i < data.size(); ++i)
     {
-        data[i].value += 1;
+        data[i].m_value += 1;
 
         if (i == 10)
         {
             std::println("Processing index 10... (and secretly corrupting index 42)");
-            data[42].value = -9999;
+            data[42].m_value = -9999;
         }
     }
 }
