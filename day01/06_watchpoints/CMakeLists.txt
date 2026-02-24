@@ -8,3 +8,4 @@ if (NOT CMAKE_BUILD_TYPE)
 endif()
 
 add_executable(watchpoints main.cpp)
+target_compile_options(watchpoints INTERFACE -O0)

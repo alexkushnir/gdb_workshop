@@ -15,7 +15,6 @@ void ProcessData(std::vector<Data>& data)
 
         if (i == 10)
         {
-            std::println("Processing index 10... (and secretly corrupting index 42)");
             data[42].m_value = -9999;
         }
     }
@@ -26,10 +25,10 @@ int main()
     std::vector<Data> dataset(100);
     for (int i = 0; i < 100; ++i)
     {
-        dataset[i] = {.id = i, .value = i * 10};
+        dataset[i] = {.m_id = i, .m_value = i * 10};
     }
 
     ProcessData(dataset);
-
+    auto var = dataset[42].m_value; // ???
     return 0;
 }
