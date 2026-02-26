@@ -103,8 +103,7 @@ int main()
         {Choice::TriggerSegfault, TriggerSegfault},
         {Choice::TriggerFork, TriggerFork},
         {Choice::TriggerExec, TriggerExec},
-        {Choice::Exit, [&exit](){ exit = true; }}
-    };
+        {Choice::Exit, [&exit]() { exit = true; }}};
 
     while (!exit)
     {
