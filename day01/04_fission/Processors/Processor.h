@@ -23,6 +23,6 @@ public:
     }
     void Dump()
     {
-        std::print("Proc size: {}, data: {}\n", m_buffer.size(), m_data.name);
+        std::print("Proc size: {}, data: {}\n", m_buffer.size(), m_data.m_name);
     }
 };
