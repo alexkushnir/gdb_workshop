@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(CMake) Debug",
+            "name": "Debug",
             "type": "cppdbg",
             "request": "launch",
             "program": "${command:cmake.launchTargetPath}",
@@ -27,6 +27,23 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "name": "Debug Core Dump",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${input:exeFile}",
+            "coreDumpPath": "${input:coreFile}",
+            "cwd": "${fileDirname}",
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for GDB",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
         }
     ],
     "inputs": [
@@ -35,6 +52,18 @@
             "description": "Enter arguments (space-separated)",
             "type": "promptString",
             "default": ""
+        },
+        {
+            "id": "exeFile",
+            "description": "Path to executable",
+            "type": "promptString",
+            "default": "${fileDirname}/build/core_dump_exe"
+        },
+        {
+            "id": "coreFile",
+            "description": "Path to core file",
+            "type": "promptString",
+            "default": "${fileDirname}/core"
         }
     ]
 }
