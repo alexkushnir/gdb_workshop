@@ -54,7 +54,7 @@ start_server() {
     echo "=========================================="
     echo ""
     echo "  In another terminal, set:"
-    echo "    export DEBUGINFOD_URLS=http://localhost:${PORT}"
+    echo "    export DEBUGINFOD_URLS=http://127.0.0.1:${PORT}"
     echo ""
     echo "  Then debug the stripped binary:"
     echo "    gdb ${BUILD_DIR}/debuginfod_demo"
@@ -63,7 +63,6 @@ start_server() {
     echo "=========================================="
     echo ""
 
-    # Run in background to get PID, then wait
     debuginfod -F "${SYMBOLS_DIR}" -p "${PORT}" -vvv &
     PID=$!
     echo "${PID}" > "${PID_FILE}"

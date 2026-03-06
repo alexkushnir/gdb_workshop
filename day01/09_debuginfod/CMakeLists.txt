@@ -7,32 +7,39 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)
 endif()
 
-# ── Build the executable with full DWARF debug info ───────────────────────────
 add_executable(debuginfod_demo main.cpp)
 
-# Always build with -ggdb3 (rich DWARF + macro tables) regardless of build type,
-# so the post-build objcopy step has something meaningful to extract.
-target_compile_options(debuginfod_demo PRIVATE -ggdb3)
+# Build with split-DWARF so debug info is emitted into separate .dwo files.
+target_compile_options(debuginfod_demo PRIVATE -ggdb3 -gsplit-dwarf -g -O2)
+target_link_options(debuginfod_demo PRIVATE -Wl,--build-id=sha1)
 
-# ── Post-build: split debug info from the binary ─────────────────────────────
-# Step 1 – copy the DWARF into <binary>.debug
-# Step 2 – strip all debug sections from the binary itself
-# Step 3 – add a GNU Build-ID link (.gnu_debuglink) so GDB/debuginfod can
-#           match the stripped binary back to the .debug file by build-id.
-# Step 4 – copy the .debug file to the source directory's symbols/ folder
-add_custom_command(TARGET debuginfod_demo POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/symbols"
-    COMMAND ${CMAKE_OBJCOPY}
-            --only-keep-debug
-            $<TARGET_FILE:debuginfod_demo>
-            $<TARGET_FILE:debuginfod_demo>.debug
-    COMMAND ${CMAKE_COMMAND} -E copy
-            $<TARGET_FILE:debuginfod_demo>.debug
-            "${CMAKE_CURRENT_SOURCE_DIR}/symbols/"
-    COMMAND ${CMAKE_OBJCOPY}
-            --strip-debug
-            --add-gnu-debuglink=$<TARGET_FILE:debuginfod_demo>.debug
-            $<TARGET_FILE:debuginfod_demo>
-    COMMENT "Splitting debug info and copying to source symbols/ dir"
+find_program(DWP dwp HINTS /usr/bin REQUIRED)
+find_program(STRIP strip HINTS /usr/bin REQUIRED)
+
+set(SYMBOLS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/symbols")
+
+add_custom_command(
+    TARGET debuginfod_demo POST_BUILD
+    # 1. Create the DWP file using dwp
+    # The output is placed directly in the symbols directory
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${SYMBOLS_DIR}"
+    COMMAND sh -c "${DWP} ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/debuginfod_demo.dir/*.dwo -o ${SYMBOLS_DIR}/$<TARGET_FILE_NAME:debuginfod_demo>.dwp"
+    
+    # 2. Extract the Build-ID note from the executable
+    COMMAND ${CMAKE_OBJCOPY} --dump-section .note.gnu.build-id=${CMAKE_CURRENT_BINARY_DIR}/build_id.bin $<TARGET_FILE:debuginfod_demo>
+    
+    # 3. Embed the Build-ID into the DWP file
+    # This allows debuginfod to find the DWP by its Build-ID
+    COMMAND ${CMAKE_OBJCOPY} --add-section .note.gnu.build-id=${CMAKE_CURRENT_BINARY_DIR}/build_id.bin 
+                             --set-section-flags .note.gnu.build-id=alloc,contents,readonly 
+                             ${SYMBOLS_DIR}/$<TARGET_FILE_NAME:debuginfod_demo>.dwp
+    
+    # 4. Strip the original executable to reduce size
+    COMMAND ${CMAKE_STRIP} --strip-debug $<TARGET_FILE:debuginfod_demo>
+    
+    # Cleanup temporary Build-ID file
+    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_BINARY_DIR}/build_id.bin
+    
+    COMMENT "Packaging DWP, embedding Build-ID, and stripping executable for target debuginfod_demo"
     VERBATIM
 )
