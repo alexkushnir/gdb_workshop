@@ -1,5 +1,5 @@
-#include <string>
 #include <print>
+#include <string>
 
 // Simple nested call example that ends in a deliberate null-pointer crash.
 // This file is the "no symbols" variant: the CMakeLists will build with

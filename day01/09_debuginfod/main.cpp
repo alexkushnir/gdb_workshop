@@ -53,7 +53,9 @@ static void ProcessData(std::span<const long> data)
     long sum = 0;
     for (long v : data)
         sum += v;
-    std::println("  data size={}, sum={}, average={:.2f}", data.size(), sum,
+    std::println("  data size={}, sum={}, average={:.2f}",
+                 data.size(),
+                 sum,
                  static_cast<double>(sum) / static_cast<double>(data.size()));
 }
 

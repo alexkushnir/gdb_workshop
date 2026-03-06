@@ -1,29 +1,29 @@
-#include <print>
 #include <memory>
+#include <print>
 #include <string>
 #include <vector>
 
 struct Manager
 {
-    std::string name;
-    int experience;
+    std::string m_name;
+    int m_experience;
 };
 
 struct Workplace
 {
-    std::string branchName;
-    Manager* manager;
+    std::string m_branchName;
+    Manager* m_manager;
 };
 
 void PrintManagerDetails(const Workplace& shop)
 {
     std::println("--- Workplace Details ---");
-    std::println("Branch: {}", shop.branchName);
+    std::println("Branch: {}", shop.m_branchName);
 
     // INTENTIONAL CRASH: Null pointer dereference
     // When analyzing the core dump, 'p shop.manager' will show 0x0.
-    std::println("Manager Name: {}", shop.manager->name);
-    std::println("Manager Experience: {} years", shop.manager->experience);
+    std::println("Manager Name: {}", shop.m_manager->m_name);
+    std::println("Manager Experience: {} years", shop.m_manager->m_experience);
 }
 
 void ProcessWorkplace(const Workplace& shop, int depth)
