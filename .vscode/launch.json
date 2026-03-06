@@ -44,6 +44,21 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "name": "Attach to a running process",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "${command:cmake.launchTargetPath}",
+            "processId": "${command:pickProcess}",
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
         }
     ],
     "inputs": [
