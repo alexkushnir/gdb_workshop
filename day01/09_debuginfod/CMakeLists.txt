@@ -14,7 +14,6 @@ target_compile_options(debuginfod_demo PRIVATE -ggdb3 -gsplit-dwarf -g -O2)
 target_link_options(debuginfod_demo PRIVATE -Wl,--build-id=sha1)
 
 find_program(DWP dwp HINTS /usr/bin REQUIRED)
-find_program(STRIP strip HINTS /usr/bin REQUIRED)
 
 set(SYMBOLS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/symbols")
 
