@@ -1,45 +1,55 @@
 #include <print>
 #include <string>
 
-bool g_status = false;
+bool gStatus = false;
 
-int multiply(int a, int b) {
+int Multiply(int a, int b)
+{
     int result = a * b;
     std::println("Multiplying {} by {}...", a, b);
     return result;
 }
 
-void hidden_function() {
+void HiddenFunction()
+{
     std::println("\n[SECRET] You found the hidden function!");
     std::println("This was executed via GDB 'call hidden_function()'\n");
-    g_status = true;
+    gStatus = true;
 }
 
-int main() {
+int main()
+{
     int x = 10;
     int y = 5;
 
     std::println("Initial value of x: {}", x);
-    
-    if (x == 20) {
+
+    if (x == 20)
+    {
         std::println("SUCCESS: x was changed to 20 via GDB!");
-    } else {
+    }
+    else
+    {
         std::println("x is still {}. Try changing it in GDB.", x);
     }
 
     std::println("This line might be skipped if you use 'jump'...");
-    
+
     std::println("Reached the post-jump location.");
 
-    int multiplication_result = multiply(x, y);
-    std::println("Multiplication result: {}", multiplication_result);
-    if (multiplication_result == 100) {
+    int multiplicationResult = Multiply(x, y);
+    std::println("Multiplication result: {}", multiplicationResult);
+    if (multiplicationResult == 100)
+    {
         std::println("SUCCESS: You forced the function to return 100!");
     }
 
-    if (!g_status) {
+    if (!gStatus)
+    {
         std::println("Graceful shutdown!");
-    } else {
+    }
+    else
+    {
         std::println("Emergency shutdown!");
     }
 
