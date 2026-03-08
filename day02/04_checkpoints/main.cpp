@@ -13,8 +13,10 @@ struct State
 
 void PrintState(const State& s)
 {
-    std::print(
-        "State: [Counter: {}, Phase: '{}', Data size: {}] ", s.m_counter, s.m_phase, s.m_data.size());
+    std::print("State: [Counter: {}, Phase: '{}', Data size: {}] ",
+               s.m_counter,
+               s.m_phase,
+               s.m_data.size());
     if (!s.m_data.empty())
     {
         std::print("Values: [");
