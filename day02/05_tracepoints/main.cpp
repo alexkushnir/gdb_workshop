@@ -16,7 +16,8 @@ void ProcessData(const DataPoint& dp)
 {
     // Break or trace here
     double processed = std::sqrt(std::abs(dp.m_value)) * 2.0;
-    std::println("Processing ID: {}, Raw: {:.2f}, Processed: {:.2f}", dp.m_id, dp.m_value, processed);
+    std::println(
+        "Processing ID: {}, Raw: {:.2f}, Processed: {:.2f}", dp.m_id, dp.m_value, processed);
 }
 
 int main()
