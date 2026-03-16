@@ -13,7 +13,7 @@ int Multiply(int a, int b)
 void HiddenFunction()
 {
     std::println("\n[SECRET] You found the hidden function!");
-    std::println("This was executed via GDB 'call hidden_function()'\n");
+    std::println("This was executed via GDB 'call HiddenFunction()'\n");
     gStatus = true;
 }
 

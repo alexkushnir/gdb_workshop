@@ -118,9 +118,12 @@ int main()
     bool exit = false;
     std::optional<Choice> choice;
     static const std::map<Choice, std::function<void()>> handlers = {
-        {Choice::TriggerSegfault, TriggerSegfault}, {Choice::TriggerFPE, TriggerFPE},
-        {Choice::TriggerInt, TriggerInt},           {Choice::TriggerTerm, TriggerTerm},
-        {Choice::TriggerAbort, TriggerAbort},       {Choice::TriggerUsr1, TriggerUsr1},
+        {Choice::TriggerSegfault, TriggerSegfault},
+        {Choice::TriggerFPE, TriggerFPE},
+        {Choice::TriggerInt, TriggerInt},
+        {Choice::TriggerTerm, TriggerTerm},
+        {Choice::TriggerAbort, TriggerAbort},
+        {Choice::TriggerUsr1, TriggerUsr1},
         {Choice::Exit, [&exit]() { exit = true; }}};
 
     while (!exit)
