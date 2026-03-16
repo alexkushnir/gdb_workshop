@@ -1,0 +1,11 @@
+# gdb_commands.txt
+# GDB commands to connect to Valgrind's gdbserver
+
+target remote | vgdb
+
+# Stop long outputs from pausing and waiting for user input
+set pagination off
+
+echo \n--- Connected to Valgrind gdbserver ---\n
+echo Type 'continue' to start/resume execution.\n
+echo Valgrind will stop here when the memory error is detected.\n
