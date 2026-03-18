@@ -94,7 +94,7 @@ int main()
     // Disable buffering for stdout so we see output before ASan aborts the process
     std::setvbuf(stdout, nullptr, _IONBF, 0);
 
-    bool should_exit = false;
+    bool shouldExit = false;
     std::optional<Choice> choice;
     static const std::map<Choice, std::function<void()>> handlers = {
         {Choice::TriggerStackOverflow, StackOverflow},
@@ -103,7 +103,7 @@ int main()
         {Choice::TriggerMemoryLeak, MemoryLeak},
         {Choice::Exit, [&should_exit]() { should_exit = true; }}};
 
-    while (!should_exit)
+    while (!shouldExit)
     {
         choice = GetUserChoice();
         if (!choice.has_value())
