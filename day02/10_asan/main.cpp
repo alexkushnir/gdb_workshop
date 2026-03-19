@@ -101,7 +101,7 @@ int main()
         {Choice::TriggerHeapOverflow, HeapOverflow},
         {Choice::TriggerUseAfterFree, UseAfterFree},
         {Choice::TriggerMemoryLeak, MemoryLeak},
-        {Choice::Exit, [&should_exit]() { should_exit = true; }}};
+        {Choice::Exit, [&shouldExit]() { shouldExit = true; }}};
 
     while (!shouldExit)
     {
