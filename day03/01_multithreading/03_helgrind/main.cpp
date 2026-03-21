@@ -2,8 +2,8 @@
 #include <pthread.h>
 #include <string>
 #include <thread>
-#include <vector>
 #include <unistd.h>
+#include <vector>
 
 // Shared variable without synchronization to trigger a data race
 int sharedCounter = 0;
@@ -34,7 +34,7 @@ int main()
     {
         threads.emplace_back(WorkerFunc, i);
     }
-  
+
     std::println("Threads started. Helgrind should detect several data races shortly.");
 
     return 0;

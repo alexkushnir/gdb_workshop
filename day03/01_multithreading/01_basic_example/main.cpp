@@ -2,8 +2,8 @@
 #include <chrono>
 #include <functional>
 #include <print>
-#include <scn/scan.h>
 #include <pthread.h>
+#include <scn/scan.h>
 #include <string>
 #include <thread>
 #include <unistd.h>
@@ -38,7 +38,11 @@ void MathTask(std::stop_token stoken)
         long next = a + b;
         a = b;
         b = next;
-        if (a > 1000000) { a = 0; b = 1; } // Prevent overflow for demo
+        if (a > 1000000)
+        {
+            a = 0;
+            b = 1;
+        } // Prevent overflow for demo
         std::this_thread::sleep_for(500ms);
     }
     std::println("[MathTask] Exiting.");
@@ -83,9 +87,9 @@ int main()
     workerThreads.emplace_back(MathTask);
     workerThreads.emplace_back(StatusTask);
     workerThreads.emplace_back(IdleTask);
-    
+
     pthread_setname_np(pthread_self(), "MainThread");
-    
+
     std::println("[Main] All threads running. You can now attach GDB.");
     std::println("[Main] Example: gdb -p {}", getpid());
     std::println("[Main] Then try: info threads, thread apply all bt");
