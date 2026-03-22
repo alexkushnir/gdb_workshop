@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_BUILD_TYPE Debug)
 
 # Enable ThreadSanitizer (TSan)
-set(TSAN_FLAGS "-fsanitize=thread -fno-omit-frame-pointer")
+set(TSAN_FLAGS "-fsanitize=thread -fno-omit-frame-pointer -O1")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TSAN_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${TSAN_FLAGS}")
 
