@@ -1,0 +1,20 @@
+cmake_minimum_required(VERSION 3.28)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+project(compiler_flags)
+
+set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -Wl,--strip-all")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s")
+
+add_executable(compiler_flags main.cpp)
+
+if (USE_GGDB3)
+    target_compile_options(compiler_flags PRIVATE -ggdb3)
+endif()
+if (USE_NO_OMIT_FRAME_POINTER)
+    target_compile_options(compiler_flags PRIVATE -fno-omit-frame-pointer)
+endif()
+if (USE_OG)
+    target_compile_options(compiler_flags PRIVATE -Og)
+endif()

@@ -1,0 +1,84 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${command:cmake.launchTargetPath}",
+            "args": [
+                "${input:programArgs}"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for GDB",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Debug Core Dump",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${input:exeFile}",
+            "coreDumpPath": "${input:coreFile}",
+            "cwd": "${fileDirname}",
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for GDB",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Attach to a running process",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "${command:cmake.launchTargetPath}",
+            "processId": "${command:pickProcess}",
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "programArgs",
+            "description": "Enter arguments (space-separated)",
+            "type": "promptString",
+            "default": ""
+        },
+        {
+            "id": "exeFile",
+            "description": "Path to executable",
+            "type": "promptString",
+            "default": "${fileDirname}/build/core_dump_exe"
+        },
+        {
+            "id": "coreFile",
+            "description": "Path to core file",
+            "type": "promptString",
+            "default": "${fileDirname}/core"
+        }
+    ]
+}
