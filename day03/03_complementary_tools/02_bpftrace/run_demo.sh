@@ -1,7 +1,7 @@
 #!/bin/bash
-# 02_procmon/run_demo.sh - Demonstrates system activity tracing with ProcMon
+# 02_bpftrace/run_demo.sh - Demonstrates system activity tracing with BPFtrace
 
-EXECUTABLE="./build/procmon_demo"
+EXECUTABLE="./build/bpftrace_demo"
 
 if [ ! -f "$EXECUTABLE" ]; then
     echo "Executable $EXECUTABLE not found. Please run ./build.sh first."
@@ -9,7 +9,7 @@ if [ ! -f "$EXECUTABLE" ]; then
 fi
 
 echo "=================================================="
-echo "ProcMon for Linux Demo"
+echo "BPFtrace for Linux Demo"
 echo "=================================================="
 echo "Starting the simulator in the background..."
 $EXECUTABLE &
@@ -18,9 +18,9 @@ SIM_PID=$!
 echo "Simulator started with PID: $SIM_PID"
 echo ""
 echo "TO TRACE THE ACTIVITY:"
-echo "1. Open another terminal."
-echo "2. Run this command:"
-echo "   ./run_trace.sh $SIM_PID"
+1. Open another terminal.
+2. Run this command:
+   ./run_trace.sh $SIM_PID
 echo "=================================================="
 echo ""
 

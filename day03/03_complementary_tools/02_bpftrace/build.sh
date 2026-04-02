@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# day03/03_complementary_tools/02_procmon/build.sh
+# day03/03_complementary_tools/02_bpftrace/build.sh
 
 set -euo pipefail
 

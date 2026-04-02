@@ -8,14 +8,14 @@ PID="$1"
 
 # Check if the process exists (we'll still try by name if it doesn't, but PID is preferred)
 if ! kill -0 "$PID" 2>/dev/null; then
-    echo "Warning: PID $PID not found. Will attempt to capture by process name: procmon_demo"
+    echo "Warning: PID $PID not found. Will attempt to capture by process name: bpftrace_demo"
 fi
 
 # Create a temporary script with the real PID
 TEMP_SCRIPT=$(mktemp /tmp/bpftrace_script.XXXXXX.bt)
 sed "s/TARGET_PID/$PID/g" trace_commands.bt > "$TEMP_SCRIPT"
 
-echo "Attaching to process $PID (and/or 'procmon_demo')..."
+echo "Attaching to process $PID (and/or 'bpftrace_demo')..."
 echo "Using processed script: $TEMP_SCRIPT"
 
 # Run bpftrace and capture stderr to see any syntax or permission errors

@@ -28,7 +28,7 @@ void SimulationStep() {
 
     // 4. Temp file dance
     std::println("[I/O] Creating and deleting temp file...");
-    std::string tempPath = "/tmp/procmon_demo_tmp.txt";
+    std::string tempPath = "/tmp/bpftrace_demo_tmp.txt";
     std::ofstream tmp(tempPath);
     if (tmp.is_open()) {
         tmp << "Transient data";
@@ -41,7 +41,7 @@ int main() {
     // Disable buffering for stdout
     std::setvbuf(stdout, nullptr, _IONBF, 0);
 
-    std::println("ProcMon for Linux Demo Simulator (PID: {})", getpid());
+    std::println("BPFtrace for Linux Demo Simulator (PID: {})", getpid());
     std::println("==========================================");
     std::println("This simulator performs varied I/O activity every 5 seconds:");
     std::println("- Reads non-existent 'config.json'");
