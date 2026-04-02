@@ -1,17 +1,31 @@
-tracepoint:syscalls:sys_enter_openat
-/pid == TARGET_PID/
+BEGIN
 {
-  printf("[%s] openat  %s\n", comm, str(args->filename));
+  printf("Tracing started... (Ctrl+C to stop)\n");
+  printf("Watching for activity from PID: TARGET_PID or process name: procmon_demo\n");
 }
 
-tracepoint:syscalls:sys_enter_read
-/pid == TARGET_PID/
+/* Trace any open syscall variant */
+tracepoint:syscalls:sys_enter_open,
+tracepoint:syscalls:sys_enter_openat,
+tracepoint:syscalls:sys_enter_openat2
+/pid == TARGET_PID || comm == "procmon_demo"/
 {
-  printf("[%s] read   fd=%d count=%d\n", comm, args->fd, args->count);
+  $h = ++@hits[comm];
+  printf("[%s] open variant: %s (total hits: %d)\n", comm, str(args->filename), $h);
 }
 
+/* Trace read/write */
+tracepoint:syscalls:sys_enter_read,
 tracepoint:syscalls:sys_enter_write
-/pid == TARGET_PID/
+/pid == TARGET_PID || comm == "procmon_demo"/
 {
-  printf("[%s] write  fd=%d count=%d\n", comm, args->fd, args->count);
+  $h = ++@hits[comm];
+  printf("[%s] %s fd=%d count=%d (total hits: %d)\n", comm, probe, args->fd, args->count, $h);
+}
+
+END
+{
+  printf("\nTracing ended. Final hit counts:\n");
+  print(@hits);
+  clear(@hits);
 }
