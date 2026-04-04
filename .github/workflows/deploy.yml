@@ -25,10 +25,9 @@ jobs:
           submodules: recursive
 
       - name: Install Zola
-        run: |
-          wget -O zola.tar.gz https://github.com/getzola/zola/releases/latest/download/zola-x86_64-unknown-linux-gnu.tar.gz
-          tar -xzf zola.tar.gz
-          sudo mv zola /usr/local/bin/zola
+        uses: taiki-e/install-action@v2
+        with:
+          tool: zola@0.19.1
 
       - name: Build site
         run: zola build
