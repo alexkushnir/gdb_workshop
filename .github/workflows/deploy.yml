@@ -4,7 +4,6 @@ name: Deploy Zola site from docs/ to GitHub Pages
 on:
   push:
     branches:
-<<<<<<< HEAD
       - master
 
 permissions:
