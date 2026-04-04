@@ -1,5 +1,4 @@
 name: Deploy Zola site from docs/ to GitHub Pages
-=======
 
 on:
   push:
@@ -10,8 +9,6 @@ permissions:
   contents: write
   pages: write
   id-token: write
-=======
-      - main
   workflow_dispatch:
 
 permissions:
