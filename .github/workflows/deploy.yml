@@ -4,11 +4,6 @@ on:
   push:
     branches:
       - master
-
-permissions:
-  contents: write
-  pages: write
-  id-token: write
   workflow_dispatch:
 
 permissions:
@@ -19,7 +14,6 @@ permissions:
 concurrency:
   group: "pages"
   cancel-in-progress: true
->>>>>>> 1785e20cb49843a8b58ada7ae8c36aa9fd7763fb
 
 jobs:
   build:
