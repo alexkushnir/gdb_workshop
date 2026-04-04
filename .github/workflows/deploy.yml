@@ -1,0 +1,35 @@
+name: Deploy Zola site from docs/ to GitHub Pages
+ 
+on:
+  push:
+    branches:
+      - master  # or main, if that's your default branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: docs
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Zola
+        run: |
+          wget -qO- https://github.com/getzola/zola/releases/download/v0.20.0/zola-v0.20.0-x86_64-unknown-linux-gnu.tar.gz | tar -xz
+          sudo mv zola /usr/local/bin/
+
+      - name: Build site
+        run: zola build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/public
+          publish_branch: gh-pages
