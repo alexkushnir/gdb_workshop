@@ -7,7 +7,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD_SCRIPT="build.sh"
 
-echo "=== Mini Build System ==="
+echo "=== GDB Workshop Build System ==="
 echo "Root: ${SCRIPT_DIR}"
 echo ""
 
