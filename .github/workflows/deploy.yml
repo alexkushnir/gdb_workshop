@@ -30,7 +30,7 @@ jobs:
           tool: zola@0.19.1
 
       - name: Build site
-        run: zola build -r docs/
+        run: zola -r docs/ build 
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
