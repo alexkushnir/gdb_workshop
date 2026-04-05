@@ -1,12 +1,13 @@
-#include <iostream>
-#include <thread>
 #include <chrono>
-#include <unistd.h>
+#include <iostream>
 #include <print>
+#include <thread>
+#include <unistd.h>
 
 using namespace std::literals;
 
-int main() {
+int main()
+{
     pid_t pid = getpid();
     int counter = 0;
 
@@ -14,7 +15,8 @@ int main() {
     std::println("My Process ID (PID) is: {}", pid);
     std::println("I'm going into a loop now. Try attaching GDB to me!");
 
-    while (true) {
+    while (true)
+    {
         counter++;
         std::println("Current counter: {} (PID: {})", counter, pid);
         std::this_thread::sleep_for(2s);

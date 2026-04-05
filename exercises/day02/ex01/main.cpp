@@ -1,20 +1,23 @@
 #include <iostream>
-#include <string>
 #include <print>
+#include <string>
 
 // Function that will cause a crash.
-void crash_here(int* ptr) {
+void CrashHere(int* ptr)
+{
     std::println("Attempting to dereference pointer...");
     *ptr = 42; // This will crash if ptr is null
 }
 
-void middle_function(int* ptr) {
-    crash_here(ptr);
+void MiddleFunction(int* ptr)
+{
+    CrashHere(ptr);
 }
 
-int main() {
+int main()
+{
     std::println("Crashing program starting...");
-    int* my_ptr = nullptr;
-    middle_function(my_ptr);
+    int* myPtr = nullptr;
+    MiddleFunction(myPtr);
     return 0;
 }
