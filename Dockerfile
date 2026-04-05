@@ -25,7 +25,8 @@ EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]
 
 RUN git config --global http.sslVerify false
-RUN git clone https://github.com/alexkushnir/gdb_workshop.git /devuser
+RUN git clone https://github.com/alexkushnir/gdb_workshop.git /devuser/gdb_workshop
+RUN git clone https://github.com/tomasz-pawelec-pl/crashfixer.git /devuser/crashfixer
 
 ENV GLIBC_TUNABLES=glibc.cpu.hwcaps=-AVX,-AVX2,-AVX_Fast_Unaligned_Load
 
