@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# build.sh — Main build script
-# Iterates over all day* subdirectories and invokes their build.sh script.
+# exercises/build.sh — Builds all days in exercises
+#                      by delegating to each day's own build.sh.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD_SCRIPT="build.sh"
 
-echo "=== GDB Workshop Build System ==="
+echo "=== Exercises Build System ==="
 echo "Root: ${SCRIPT_DIR}"
 echo ""
 
@@ -15,8 +15,8 @@ echo ""
 FAILED=()
 BUILT=()
 
-# Find and sort all day* and exercises directories
-mapfile -t DAY_DIRS < <(find "${SCRIPT_DIR}" -maxdepth 1 -type d \( -name "day*" -o -name "exercises" \) | sort)
+# Find and sort all day* directories
+mapfile -t DAY_DIRS < <(find "${SCRIPT_DIR}" -maxdepth 1 -type d -name "day*" | sort)
 
 if [[ ${#DAY_DIRS[@]} -eq 0 ]]; then
     echo "No day* directories found. Nothing to build."
@@ -49,7 +49,7 @@ for day_dir in "${DAY_DIRS[@]}"; do
     echo ""
 done
 
-echo "=== Build Summary ==="
+echo "=== Exercises Build Summary ==="
 echo "  Built:  ${#BUILT[@]} day(s): ${BUILT[*]:-none}"
 echo "  Failed: ${#FAILED[@]} day(s): ${FAILED[*]:-none}"
 
