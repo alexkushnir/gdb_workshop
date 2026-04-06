@@ -16,7 +16,8 @@ void ProcessOrder(Item& item)
     if (item.m_quantity > 0)
     {
         item.m_quantity--;
-        std::println("Processed 1 {}, {} remaining at ${}", item.m_name, item.m_quantity, item.m_price);
+        std::println(
+            "Processed 1 {}, {} remaining at ${}", item.m_name, item.m_quantity, item.m_price);
     }
     else
     {
