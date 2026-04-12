@@ -88,7 +88,7 @@ int main()
     std::println("Process ID: {}", getpid());
 
     std::vector<std::thread> threads;
-    
+
     // Launch different functions in each thread
     threads.emplace_back(WorkerAlpha);
     pthread_setname_np(threads.back().native_handle(), "Worker-Alpha");
