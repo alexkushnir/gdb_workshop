@@ -12,10 +12,24 @@ void ProcessData(int id, const std::string& info)
     std::cout << "DEBUG (app): Handling ID " << id << std::endl;
 }
 
+/**
+ * A trigger function that will enable the breakpoint on ProcessData.
+ */
+void PrepareWork()
+{
+    std::cout << "DEBUG (app): System is ready for intensive logging." << std::endl;
+}
+
 int main()
 {
     std::cout << "Breakpoint Commands Demonstration" << std::endl;
     std::cout << "---------------------------------" << std::endl;
+
+    // This call should be ignored by GDB because Breakpoint 1 is initially disabled.
+    ProcessData(0, "Pre-flight check");
+
+    // This call should trigger Breakpoint 2, which will enable Breakpoint 1.
+    PrepareWork();
 
     std::vector<std::pair<int, std::string>> items = {{101, "Initializing sensor"},
                                                       {102, "Reading data"},
