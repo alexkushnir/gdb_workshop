@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-project(test CXX)
+project(fission_demo CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -17,7 +17,7 @@ endif()
 add_subdirectory(Processors)
 add_subdirectory(Utils)
 
-add_executable(test 
+add_executable(fission_demo 
     main.cpp
     Processors/Processor1.cpp 
     Processors/Processor2.cpp 
@@ -26,5 +26,5 @@ add_executable(test
     Utils/Heavy.cpp
 )
 
-target_link_libraries(test PRIVATE proc_lib utils_lib)
-target_include_directories(test PRIVATE Processors Utils)
+target_link_libraries(fission_demo PRIVATE proc_lib utils_lib)
+target_include_directories(fission_demo PRIVATE Processors Utils)
