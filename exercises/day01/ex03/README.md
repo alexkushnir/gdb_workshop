@@ -11,7 +11,7 @@ Your goal is to use VS Code's debugger to inspect a recursive function, explore 
 1.  **Build the target**: Open a terminal in this folder and run `./build.sh`. Alternatively, if you have the "CMake Tools" extension, you can let it configure and build the project for you.
 2.  **Open the file**: Open `main.cpp` in VS Code.
 3.  **Set a breakpoint**:
-    *   Find the `fibonacci` function.
+    *   Find the `Fibonacci` function.
     *   Click in the gutter (to the left of the line numbers) on the line `if (n <= 1)`. A red dot should appear.
 4.  **Start Debugging**:
     *   Press `F5` or go to the "Run and Debug" side bar and click "Start Debugging".
@@ -25,7 +25,7 @@ Your goal is to use VS Code's debugger to inspect a recursive function, explore 
     *   Use the floating toolbar to:
         *   **Continue** (`F5`): Run until the next breakpoint.
         *   **Step Over** (`F10`): Go to the next line without entering functions.
-        *   **Step Into** (`F11`): Enter the `fibonacci` function.
+        *   **Step Into** (`F11`): Enter the `Fibonacci` function.
         *   **Step Out** (`Shift+F11`): Finish the current function and return to the caller.
         *   **Restart** (`Ctrl+Shift+F5`).
         *   **Stop** (`Shift+F5`).

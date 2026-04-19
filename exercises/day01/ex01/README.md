@@ -12,16 +12,16 @@ Your goal is to pause the execution of the `ex01` executable at various points, 
 2.  **Start GDB**: Start GDB with the compiled executable (which will be located in the `build/` directory).
 3.  **Set breakpoints**:
     *   Set a breakpoint at the `main` function.
-    *   Set a breakpoint at the `process_order` function.
-    *   Set a breakpoint at the line inside `calculate_total` where `total` is accumulated.
+    *   Set a breakpoint at the `ProcessOrder` function.
+    *   Set a breakpoint at the line inside `CalculateTotal` where `total` is accumulated.
 4.  **Run the program**: Run the program until you hit your first breakpoint.
 5.  **Step and Next**:
     *   Use `next` (`n`) to step over lines within `main`.
-    *   Use `step` (`s`) to step into functions like `process_order` and `calculate_total`.
+    *   Use `step` (`s`) to step into functions like `ProcessOrder` and `CalculateTotal`.
 6.  **Print & Display Variables**:
-    *   When stopped in `process_order`, `print` the value of `item` (`p item`).
-    *   Use the `display` command to automatically show `item.quantity` or `item.name` every time execution stops.
-    *   When inside the loop of `calculate_total`, print the `total` accumulated so far.
+    *   When stopped in `ProcessOrder`, `print` the value of `item` (`p item`).
+    *   Use the `display` command to automatically show `item.m_quantity` or `item.m_name` every time execution stops.
+    *   When inside the loop of `CalculateTotal`, print the `total` accumulated so far.
 7.  **Explore**: Experiment with `step` vs. `next`, and see how variables change as you step through the loops.
 
 Take your time to get comfortable with `b` (break), `n` (next), `s` (step), `c` (continue), `p` (print), and `display`. These are the bread and butter of everyday GDB usage!
