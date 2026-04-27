@@ -1,34 +1,81 @@
+#include <atomic>
 #include <chrono>
 #include <print>
+#include <string>
 #include <thread>
+#include <unistd.h>
+#include <vector>
 
 using namespace std::chrono_literals;
 
-void PrintFunction()
+struct Vault
 {
-    std::uint64_t counter = 0;
-    while (true)
+    int m_accessCode = 4277;
+    std::string m_secretPayload = "GDB_IS_AWESOME_2026";
+    bool m_isUnlocked = false;
+};
+
+Vault globalVault;
+std::atomic<bool> shouldExit{false};
+
+void DeepComputeLayer3(int id)
+{
+    // This provides a nice deep stack for backtrace practice
+    std::println("[SYSTEM] Processing secure data fragment #{}...", id);
+    std::this_thread::sleep_for(500ms);
+}
+
+void DeepComputeLayer2(int id)
+{
+    DeepComputeLayer3(id);
+}
+void DeepComputeLayer1(int id)
+{
+    DeepComputeLayer2(id);
+}
+
+void SecurityHeartbeat()
+{
+    static int beat = 0;
+    if (globalVault.m_isUnlocked)
     {
-        std::println("{}: {}", std::this_thread::get_id(), ++counter);
-        std::this_thread::sleep_for(1s);
+        std::println("[SYSTEM] STATUS: !!! COMPROMISED !!! - Secret: {}", globalVault.m_secretPayload);
+    }
+    else
+    {
+        std::println("[SYSTEM] STATUS: SECURE - Heartbeat #{}", ++beat);
     }
 }
 
-void PrintFunctioWrapper()
+void RunSecurityLayer3()
 {
-    PrintFunction();
+    SecurityHeartbeat();
 }
-
-void PrintFunctionWrapperWrapper()
+void RunSecurityLayer2()
 {
-    PrintFunctioWrapper();
+    RunSecurityLayer3();
+}
+void RunSecurityLayer1()
+{
+    RunSecurityLayer2();
 }
 
 int main()
 {
-    volatile bool stop = false;
+    std::println("========================================");
+    std::println("   SECURE DATA VAULT SYSTEM v2.0       ");
+    std::println("========================================");
+    std::println("Process ID: {}", getpid());
+    std::println("System is running. Attach GDB to inspect.");
+    std::println("----------------------------------------");
 
-    PrintFunctionWrapperWrapper();
+    int fragmentId = 0;
+    while (!shouldExit)
+    {
+        SecurityHeartbeat();
+        DeepComputeLayer1(++fragmentId);
+        std::this_thread::sleep_for(1s);
+    }
 
     return 0;
 }
