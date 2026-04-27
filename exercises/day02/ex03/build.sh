@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# day02/01_core_dump/04_additional_core_dump/build.sh
+# exercises/day02/ex02/build.sh
 # Usage: bash build.sh [--full-build | --build-only | --clean]
 #   (no args)      Full build: configure + build
 #   --full-build   Delete build dir, then configure + build
