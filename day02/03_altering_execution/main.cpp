@@ -1,57 +1,55 @@
+#include <chrono>
 #include <print>
-#include <string>
+#include <thread>
 
-bool gStatus = false;
+using namespace std::chrono_literals;
 
-int Multiply(int a, int b)
+bool StopStatus(bool shouldToggle)
 {
-    int result = a * b;
-    std::println("Multiplying {} by {}...", a, b);
-    return result;
+    static bool shouldStop = false;
+    if (shouldToggle)
+    {
+        shouldStop = !shouldStop;
+    }
+
+    return shouldStop;
 }
 
-void HiddenFunction()
+bool StopStatus()
 {
-    std::println("\n[SECRET] You found the hidden function!");
-    std::println("This was executed via GDB 'call HiddenFunction()'\n");
-    gStatus = true;
+    return StopStatus(true);
+}
+
+void PrintFunction()
+{
+    std::uint64_t counter = 0;
+    while (!StopStatus(false) && counter < 1'000'000)
+    {
+        std::println("{}: {}", std::this_thread::get_id(), ++counter);
+        std::this_thread::sleep_for(1s);
+    }
+}
+
+void PrintFunctioWrapper()
+{
+    std::println("Entering PrintFunctionWrapper...");
+    PrintFunction();
+    std::println("Exiting PrintFunctionWrapper...");
+}
+
+void PrintFunctionWrapperWrapper()
+{
+    std::println("Entering PrintFunctionWrapperWrapper...");
+    PrintFunctioWrapper();
+    std::println("Exiting PrintFunctionWrapperWrapper...");
 }
 
 int main()
 {
-    int x = 10;
-    int y = 5;
-
-    std::println("Initial value of x: {}", x);
-
-    if (x == 20)
-    {
-        std::println("SUCCESS: x was changed to 20 via GDB!");
-    }
-    else
-    {
-        std::println("x is still {}. Try changing it in GDB.", x);
-    }
-
-    std::println("This line might be skipped if you use 'jump'...");
-
-    std::println("Reached the post-jump location.");
-
-    int multiplicationResult = Multiply(x, y);
-    std::println("Multiplication result: {}", multiplicationResult);
-    if (multiplicationResult == 100)
-    {
-        std::println("SUCCESS: You forced the function to return 100!");
-    }
-
-    if (!gStatus)
-    {
-        std::println("Graceful shutdown!");
-    }
-    else
-    {
-        std::println("Emergency shutdown!");
-    }
-
+    std::println("=========================================");
+    std::println("Process ID: {}", getpid());
+    std::println("System is running. Attach GDB to inspect.");
+    std::println("=========================================");
+    PrintFunctionWrapperWrapper();
     return 0;
 }
