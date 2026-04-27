@@ -5,7 +5,7 @@ RUN apt-get update && \
     build-essential vim tree git file gdb python3-pip pipx tree\
     g++ make ninja-build cmake linux-tools-common linux-tools-generic\
     libc6-dev libc6-dbg python3-gi libglib2.0-dev python3-ply linux-tools-common \
-    valgrind tcpdump clang-format-18 clang-tidy-18 \
+    valgrind tcpdump clang-format-18 clang-tidy-18 gdbserver \
     && rm -rf /var/lib/apt/lists/*
 
 RUN add-apt-repository universe && apt-get update && apt-get install --no-install-recommends -y gcc-14 g++-14
