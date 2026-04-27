@@ -1,4 +1,4 @@
-# Exercise 02: Attaching to a Running Process
+# Exercise 03: Attaching to a Running Process
 
 In this exercise, you will practice attaching GDB to a process that is already running. This is a vital skill for debugging services, long-running background tasks, or programs that seem to "hang" unexpectedly.
 
@@ -14,7 +14,7 @@ Your goal is to:
 1.  **Build the target**: Run `./build.sh` to compile the exercise.
 2.  **Start the program**: 
     Run the program in your terminal. It will print its PID and then enter a loop:
-    `./build/ex02`
+    `./build/ex03`
 3.  **Open another terminal**: (Or put the first one in the background).
 4.  **Attach GDB**:
     You have two ways to do this:
