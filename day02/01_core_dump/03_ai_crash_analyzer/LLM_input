@@ -2,7 +2,7 @@
 LLM INPUT PROMPT
 ============================================================
 
-Timestamp: 2026-02-02T19:49:47.310416
+Timestamp: 2026-04-27T12:46:20.396363
 Model: qwen
 Temperature: 0.1
 Max Tokens: 1024
@@ -12,54 +12,54 @@ PROMPT:
 ----------------------------------------
 === CRASH ANALYSIS ===
 
-#0  0x00005c3ad4e9e344 in Crash (intVar=6, strVar="Hello World") at /app/c_crasher/main.cpp:6
-   1     #include <string>
-   2     
-   3     void Crash(int intVar, std::string strVar)
-   4     {
-   5         int* a = nullptr;
-   6 >>>     *a = 1;
-   7     }
-   8     
-   9     void CrashWrapper(int intVar, std::string strVar)
-  10     {
-  11         intVar++;
+#2  0x0000576777468c8e in Maze::at (this=0x7ffd91f60b00, p=...) at /app/c_crasher/main.cpp:56
+  51         char at(const Position& p) const {
+  52             return grid_[p.row()][p.col()];
+  53         }
+  54     
+  55         char& at(const Position& p) {
+  56 >>>         return grid_[p.row()][p.col()];
+  57         }
+  58     
+  59         bool isWall(const Position& p) const {
+  60             return at(p) == '#';
+  61         }
 
-#1  0x00005c3ad4e9e3ad in CrashWrapper (intVar=6, strVar="Hello World") at /app/c_crasher/main.cpp:13
-   8     
-   9     void CrashWrapper(int intVar, std::string strVar)
-  10     {
-  11         intVar++;
-  12         strVar += " World"; 
-  13 >>>     Crash(intVar, strVar);
-  14     }
-  15     
-  16     void CrashWrapperWrapper(int intVar, std::string strVar)
-  17     {
-  18         CrashWrapper(intVar, strVar);
+#3  0x0000576777468f28 in Maze::markPath (this=0x7ffd91f60b00, path=std::vector of length 23, capacity 23 = {...}) at /app/c_crasher/main.cpp:80
+  75             throw std::runtime_error("Target not found");
+  76         }
+  77     
+  78         void markPath(const std::vector<Position>& path) {
+  79             for (const auto& p : path) {
+  80 >>>             if (at(p) == '.') {
+  81                     at(p) = '*';
+  82                 }
+  83             }
+  84         }
+  85     
 
-#2  0x00005c3ad4e9e417 in CrashWrapperWrapper (intVar=5, strVar="Hello") at /app/c_crasher/main.cpp:18
-  13         Crash(intVar, strVar);
-  14     }
-  15     
-  16     void CrashWrapperWrapper(int intVar, std::string strVar)
-  17     {
-  18 >>>     CrashWrapper(intVar, strVar);
-  19     }
-  20     
-  21     int main()
-  22     {
-  23         int intVar = 5;
+#4  0x00005767774677da in solve_and_print (maze=..., bounty_greedy=true) at /app/c_crasher/main.cpp:180
+ 175         }
+ 176         std::cout << std::endl;
+ 177         if(solved) {
+ 178             std::cout << "Solution:\n";
+ 179             Maze solution = maze;
+ 180 >>>         solution.markPath(path);
+ 181             solution.print();
+ 182         }
+ 183     }
+ 184     
+ 185     int main() {
 
-#3  0x00005c3ad4e9e4d7 in main () at /app/c_crasher/main.cpp:25
-  20     
-  21     int main()
-  22     {
-  23         int intVar = 5;
-  24         std::string strVar = "Hello";
-  25 >>>     CrashWrapperWrapper(intVar, strVar);
-  26         return 0;
-  27     }
+#5  0x0000576777468133 in main () at /app/c_crasher/main.cpp:218
+ 213     
+ 214         solve_and_print(Maze(grid1));
+ 215         solve_and_print(Maze(grid1), false /*not bounty-greedy*/);
+ 216         solve_and_print(Maze(grid2));
+ 217         solve_and_print(Maze(grid2), false /*not bounty-greedy*/);
+ 218 >>>     solve_and_print(Maze(grid3));
+ 219         solve_and_print(Maze(grid3), false /*not bounty-greedy*/);
+ 220     }
 
 TASK: Analyze the crash above, identify the root cause, and provide the COMPLETE corrected source code in ```c code fences. Include ALL necessary fixes and maintain proper C code structure.
 
