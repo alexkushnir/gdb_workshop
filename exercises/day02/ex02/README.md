@@ -1,4 +1,4 @@
-# Exercise 04: Advanced Core Dump Analysis
+# Exercise 02: Advanced Core Dump Analysis
 
 In this exercise, you will debug a Maze Solver that crashes under certain conditions. This exercise is designed to practice analyzing coredump using GDB.
 
