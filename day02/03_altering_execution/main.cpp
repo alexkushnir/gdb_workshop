@@ -28,6 +28,8 @@ void PrintFunction()
         std::println("{}: {}", std::this_thread::get_id(), ++counter);
         std::this_thread::sleep_for(1s);
     }
+
+    std::println("{}: Stopping PrintFunction at counter value: {}", std::this_thread::get_id(), counter);
 }
 
 void PrintFunctioWrapper()
