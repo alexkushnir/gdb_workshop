@@ -16,6 +16,9 @@ int main()
     constexpr size_t size = sizeof(dp);
     auto buf = std::make_unique<char[]>(size);    
 
+    auto dummy = new int[10];
+    dummy[0] = 12345;
+
     std::memcpy(buf.get(), &dp, size);
 
     std::ofstream f("out.bin", std::ios::binary | std::ios::out);
