@@ -1,0 +1,7 @@
+{
+    suppress_all_flows
+    Memcheck:Leak
+    match-leak-kinds: definite
+    fun:_Znwm
+    fun:_Z23suppressed_leak_examplev
+}
