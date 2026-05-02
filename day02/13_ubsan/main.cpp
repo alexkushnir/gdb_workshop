@@ -54,8 +54,6 @@ int main(int argc, char** argv)
     ShiftOutOfBounds();
     DivisionByZero(0);
 
-    // Note: Null pointer deref might crash the app after UBSan reports it,
-    // so we put it last or use UBSAN_OPTIONS=halt_on_error=0.
     NullPointerDereference();
 
     std::println("\nDemo finished (if you see this, UBSan didn't halt execution).");
