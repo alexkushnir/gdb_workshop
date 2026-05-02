@@ -84,12 +84,12 @@ T* object_from_member_ptr(M* member_ptr, M T::*member) {
 int main() {
     std::cout << "=== Creating different leak scenarios ===\n";
 
-    // definitely_lost_example();
-    // indirectly_lost_example();
+    definitely_lost_example();
+    indirectly_lost_example();
     possibly_lost_example();
-    // still_reachable_example();
-    // suppressed_leak_example();
-    // call_suppressed_leak_example();
+    still_reachable_example();
+    suppressed_leak_example();
+    call_suppressed_leak_example();
 
     // No explicit delete for any of the above ⇒ leaks
 
