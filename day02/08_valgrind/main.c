@@ -4,14 +4,14 @@
 
 void MemoryLeak()
 {
-    // printf("--- Triggering Memory Leak ---\n");
+    printf("--- Triggering Memory Leak ---\n");
     int* ptr = (int*)malloc(10 * sizeof(int));
     // ptr is never freed
 }
 
 void UninitializedRead()
 {
-    // printf("--- Triggering Uninitialized Read ---\n");
+    printf("--- Triggering Uninitialized Read ---\n");
     int a[10];
     if (a[5] == 42)
     { // 'a' is on the stack and uninitialized
@@ -21,7 +21,7 @@ void UninitializedRead()
 
 void HeapOutOfBounds()
 {
-    // printf("--- Triggering Heap Out-of-Bounds ---\n");
+    printf("--- Triggering Heap Out-of-Bounds ---\n");
     char* ptr = (char*)malloc(10);
     ptr[10] = 'X'; // Writing 1 byte past the end
     free(ptr);
@@ -29,7 +29,7 @@ void HeapOutOfBounds()
 
 void InvalidFree()
 {
-    // printf("--- Triggering Invalid Free ---\n");
+    printf("--- Triggering Invalid Free ---\n");
     int* ptr = (int*)malloc(sizeof(int));
     free(ptr);
     free(ptr); // Double free
@@ -37,8 +37,8 @@ void InvalidFree()
 
 int main(int argc, char** argv)
 {
-    // printf("Valgrind Demo\n");
-    // printf("======================\n\n");
+    printf("Valgrind Demo\n");
+    printf("======================\n\n");
 
     if (argc < 2)
     {
@@ -63,6 +63,6 @@ int main(int argc, char** argv)
         InvalidFree();
     }
 
-    // printf("\nDemo finished.\n");
+    printf("\nDemo finished.\n");
     return 0;
 }
