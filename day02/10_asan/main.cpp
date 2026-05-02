@@ -16,12 +16,20 @@ enum class Choice : int
     Exit = 0
 };
 
+const char* GetStr()
+{
+    static std::string longStr(102, 'A'); // Create a long string of 200 'A's
+    return longStr.c_str();
+}
+
 static void StackOverflow()
 {
+    auto str = GetStr();
     std::println("--- Triggering Stack Buffer Overflow ---");
-    char buffer[10];
+    char buffer[100];
+    std::println("Buffer address: {:p}", static_cast<void*>(buffer));
     // Intentional overflow
-    std::strcpy(buffer, "This string is way too long for the buffer");
+    std::strcpy(buffer, str);
     std::println("Result: {}", buffer);
 }
 
@@ -34,7 +42,10 @@ static void HeapOverflow()
     {
         array[i] = i * 10;
     }
-    std::println("Result: {}", array[5]);
+
+    auto badIndex = 1205; // Accessing far beyond allocated size
+    std::println("Array address: {:p}", static_cast<void*>(array + badIndex));
+    std::println("Result: {}", array[badIndex]); // Accessing far beyond allocated size
     delete[] array;
 }
 
