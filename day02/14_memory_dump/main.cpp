@@ -21,13 +21,14 @@ int main()
 
     std::memcpy(buf.get(), &dp, size);
 
-    std::ofstream f("out.bin", std::ios::binary | std::ios::out);
-    f.write(buf.get(), size);
-    f.close();
-    std::ifstream f2("out.bin", std::ios::binary | std::ios::in);
+    std::ofstream outFile("out.bin", std::ios::binary | std::ios::out);
+    outFile.write(buf.get(), size);
+    outFile.close();
+
+    std::ifstream inFile("out.bin", std::ios::binary | std::ios::in);
 
     char buf2[size] = { 0 };
-    f2.read(buf2, size); 
+    inFile.read(buf2, size); 
     
     for (const auto& it : buf2)
     {
