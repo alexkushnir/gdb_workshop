@@ -28,7 +28,7 @@ int main()
 
     char buf2[size] = { 0 };
     f2.read(buf2, size); 
-    // std::hex
+    
     for (const auto& it : buf2)
     {
         std::print("{:02x} ", it);
