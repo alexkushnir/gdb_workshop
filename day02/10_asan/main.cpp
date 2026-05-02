@@ -18,7 +18,7 @@ enum class Choice : int
 
 const char* GetStr()
 {
-    static std::string longStr(102, 'A'); // Create a long string of 200 'A's
+    static std::string longStr(102, 'A'); // Create a long string of 102 'A's
     return longStr.c_str();
 }
 
@@ -37,6 +37,7 @@ static void HeapOverflow()
 {
     std::println("--- Triggering Heap Buffer Overflow ---");
     int* array = new int[5];
+
     // Intentional overflow
     for (int i = 0; i <= 5; ++i)
     {
