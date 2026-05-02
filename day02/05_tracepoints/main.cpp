@@ -29,7 +29,7 @@ int main()
 
     std::vector<DataPoint> repository;
 
-    for (int i = 0; i < 100; ++i)
+    for (int i = 0; i < 20; ++i)
     {
         DataPoint dp = {i,
                         std::sin(i * 0.1) * 100.0,
