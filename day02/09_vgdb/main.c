@@ -20,17 +20,7 @@ int main()
     printf("Valgrind + GDB (vgdb) Demo\n");
     printf("==========================\n");
     printf("PID: %d\n", getpid());
-    printf("\n[Program] I will wait for 10 seconds to allow you to connect GDB.\n");
-    printf("[Program] Alternatively, Valgrind will stop at the first detected error.\n");
-
-    for (int i = 10; i > 0; i--)
-    {
-        printf("[Program] Waiting... %d\r", i);
-        fflush(stdout);
-        sleep(1);
-    }
-    printf("\n");
-
+    
     TriggerBug();
 
     printf("[Program] Demo finished.\n");
