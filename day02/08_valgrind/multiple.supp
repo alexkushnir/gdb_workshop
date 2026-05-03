@@ -1,0 +1,31 @@
+{
+   still_reachable_example
+   Memcheck:Cond
+   fun:_ZNKSt7num_putIcSt19ostreambuf_iteratorIcSt11char_traitsIcEEE13_M_insert_intIlEES3_S3_RSt8ios_basecT_
+   fun:_ZNSo9_M_insertIlEERSoT_
+   fun:_Z23still_reachable_examplev
+   fun:main
+}
+{
+   definitely_lost_example
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_Z23definitely_lost_examplev
+   fun:main
+}
+{
+   suppressed_leak_example
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_Z23suppressed_leak_examplev
+}
+{
+   indirectly_lost_example
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_Z23indirectly_lost_examplev
+   fun:main
+}
