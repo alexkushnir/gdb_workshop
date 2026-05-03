@@ -23,6 +23,7 @@ void CounterTask(std::stop_token stoken)
     {
         sharedCounter++;
         std::this_thread::sleep_for(1s);
+        std::println("[CounterTask] Incremented counter to {}", sharedCounter.load());
     }
     std::println("[CounterTask] Exiting.");
 }
@@ -44,6 +45,7 @@ void MathTask(std::stop_token stoken)
             b = 1;
         } // Prevent overflow for demo
         std::this_thread::sleep_for(500ms);
+        std::println("[MathTask] Fibonacci number: {}", a);
     }
     std::println("[MathTask] Exiting.");
 }
@@ -69,6 +71,7 @@ void IdleTask(std::stop_token stoken)
     while (!stoken.stop_requested())
     {
         std::this_thread::sleep_for(10s);
+        std::println("[IdleTask] Still idle...");
     }
     std::println("[IdleTask] Exiting.");
 }
