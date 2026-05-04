@@ -12,4 +12,9 @@ if (USE_OPTIMIZATION)
     target_compile_options(ex01 PRIVATE -O2)
 endif()
 
+if (USE_TSAN)
+    target_compile_options(ex01 PRIVATE -fsanitize=thread)
+    target_link_options(ex01 PRIVATE -fsanitize=thread)
+endif()
+
 
