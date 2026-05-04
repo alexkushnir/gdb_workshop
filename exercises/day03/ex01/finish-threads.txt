@@ -1,0 +1,19 @@
+define finish_threads
+    set $main_thread_id = $arg0 + 0
+    set $thread_0_id = $arg1 + 0
+    set $thread_count = $arg2 + 0
+
+    while ($thread_count > 0)
+        if ($thread_count != $main_thread_id && $thread_count != $thread_0_id)
+            thread $thread_count    
+            continue &
+        end
+        set $thread_count = $thread_count - 1
+    end    
+
+    thread $main_thread_id
+end
+document finish_threads
+    Custom command finish all running threads except main and thread 0
+    Usage: finish_threads <main_thread_id> <thread_0_id> <total_thread_count>
+end
