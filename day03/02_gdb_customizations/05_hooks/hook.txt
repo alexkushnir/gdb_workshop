@@ -1,0 +1,8 @@
+define hook-stop
+  echo \n====== STOP ======\n
+  where
+  info locals
+  x/5i $pc-5
+  list
+  echo =================\n
+end
