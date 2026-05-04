@@ -14,7 +14,7 @@ Your goal is to inspect a program that suffers from a data race due to unsynchro
 4.  **Set Breakpoints**:
     *   Set a breakpoint at the beginning of `main`.
     *   Set a breakpoint on the end of `main` function (line 25)
-    *   Set a breakpoint inside the thread function on the sum expression: `*sum += a;` (line 11).
+    *   Set a breakpoint inside the thread function (`b func`)
     *   Set non-stop mode: `set non-stop on`.
 5.  **Run**: Type `run`. The program will stop at `main`. Continue (`c`) to hit the breakpoint inside `func`.
 6.  **Inspect Threads**:
@@ -30,7 +30,7 @@ Your goal is to inspect a program that suffers from a data race due to unsynchro
     ``` 
     set $thr_main=1 # Make sure the main thread has ID 1
     set $thr_0=<ID from paragraph 6>
-    set $thr_idx=10
+    set $thr_idx=11
     while ($thr_idx > 0)
       if ($thr_idx != $thr_main && $thr_idx != $thr_0)
         thread $thr_idx
