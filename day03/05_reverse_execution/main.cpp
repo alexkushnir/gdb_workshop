@@ -1,40 +1,62 @@
-#include <string>
+#include <iostream>
 #include <vector>
-// TBD - test on docker
+#include <cstring>
+#include <string>
 
-struct Data
+struct Record 
 {
     int m_id;
-    std::string m_value;
+    char m_username[12];
+    int m_accessLevel;
 };
 
-void ProcessData(Data& data)
+void SecureClearName(Record& r) 
 {
-    if (data.m_id == 42)
+    // BUG: Off-by-one error in memset. 
+    // The username buffer is 12 bytes, but we clear 13.
+    // This overwrites the first byte of 'access_level'.
+    std::memset(r.m_username, 0, 13); 
+}
+
+void ProcessDatabase(std::vector<Record>& db) 
+{
+    for (auto& r : db) 
     {
-        // Imaginary complex logic that has a side effect
-        data.m_value = "Corrupted";
+        if (r.m_id == 2) 
+        {
+            SecureClearName(r);
+        }
     }
 }
 
-int main()
+int main() 
 {
-    std::vector<Data> dataset = {{1, "Initial"}, {42, "Important"}, {100, "Final"}};
-
-    for (auto& item : dataset)
+    std::vector<Record> db = 
     {
-        ProcessData(item);
-    }
+        {1, "admin", 100},
+        {2, "guest", 1},
+        {3, "operator", 50}
+    };
 
-    // BREAKPOINT HERE: End of problematic flow.
-    // Inspect 'dataset' to see that item 42 is corrupted.
-    // Set a watchpoint on the memory and use 'reverse-continue' to find the cause.
-    for (const auto& item : dataset)
+    std::cout << "Starting database processing..." << std::endl;
+    std::cout << "Guest (ID 2) access level: " << db[1].m_accessLevel << std::endl;
+
+    ProcessDatabase(db);
+
+    // BREAKPOINT HERE:
+    // Notice that Guest's access level is no longer 1.
+    // 1. Run to this point.
+    // 2. Check the value: print db[1].access_level
+    // 3. Set a watchpoint: watch db[1].access_level
+    // 4. Use 'reverse-continue' to find where the value was changed.
+    
+    if (db[1].m_accessLevel != 1) 
     {
-        if (item.m_value == "Corrupted")
-        {
-            break;
-        }
+        std::cout << "BUG DETECTED: Guest access level corrupted! Current value: " 
+                  << db[1].m_accessLevel << std::endl;
+    } else 
+    {
+        std::cout << "Database processed successfully." << std::endl;
     }
 
     return 0;
