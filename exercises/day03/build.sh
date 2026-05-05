@@ -1,58 +1,47 @@
 #!/usr/bin/env bash
-# exercises/build.sh — Builds all days in exercises
-#                      by delegating to each day's own build.sh.
+# exercises/day02/build.sh — Builds all projects in this day's subdirectories
+#                            by delegating to each project's own build.sh.
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DAY_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD_SCRIPT="build.sh"
 
-echo "=== Exercises Build System ==="
-echo "Root: ${SCRIPT_DIR}"
-echo ""
+echo "  Building projects in exercises/$(basename "${DAY_DIR}")..."
 
-# Track overall status
 FAILED=()
 BUILT=()
 
-# Find and sort all day* directories
-mapfile -t DAY_DIRS < <(find "${SCRIPT_DIR}" -maxdepth 1 -type d -name "day*" | sort)
+# Find all immediate subdirectories, sorted
+mapfile -t PROJECTS < <(find "${DAY_DIR}" -maxdepth 1 -mindepth 1 -type d | sort)
 
-if [[ ${#DAY_DIRS[@]} -eq 0 ]]; then
-    echo "No day* directories found. Nothing to build."
-    exit 0
-fi
-
-for day_dir in "${DAY_DIRS[@]}"; do
-    day_name="$(basename "${day_dir}")"
-    build_script="${day_dir}/${BUILD_SCRIPT}"
-
-    echo "--- Building ${day_name} ---"
+for project_dir in "${PROJECTS[@]}"; do
+    project_name="$(basename "${project_dir}")"
+    build_script="${project_dir}/${BUILD_SCRIPT}"
 
     if [[ ! -f "${build_script}" ]]; then
-        echo "  [SKIP] No ${BUILD_SCRIPT} found in ${day_name}"
-        echo ""
+        echo "    [SKIP] ${project_name} — no ${BUILD_SCRIPT} found"
         continue
     fi
 
-    if [[ ! -x "${build_script}" ]]; then
-        chmod +x "${build_script}"
-    fi
+    [[ ! -x "${build_script}" ]] && chmod +x "${build_script}"
 
-    if (cd "${day_dir}" && bash "${build_script}" "$@"); then
-        echo "  [OK] ${day_name} built successfully"
-        BUILT+=("${day_name}")
+    echo "    [build] ${project_name}"
+
+    if (cd "${project_dir}" && bash "${build_script}" "$@"); then
+        echo "      -> OK"
+        BUILT+=("${project_name}")
     else
-        echo "  [FAIL] ${day_name} build failed"
-        FAILED+=("${day_name}")
+        echo "      -> FAILED"
+        FAILED+=("${project_name}")
     fi
-    echo ""
 done
 
-echo "=== Exercises Build Summary ==="
-echo "  Built:  ${#BUILT[@]} day(s): ${BUILT[*]:-none}"
-echo "  Failed: ${#FAILED[@]} day(s): ${FAILED[*]:-none}"
+if [[ ${#BUILT[@]} -eq 0 && ${#FAILED[@]} -eq 0 ]]; then
+    echo "  No projects found."
+fi
 
 if [[ ${#FAILED[@]} -gt 0 ]]; then
+    echo "  Failed projects: ${FAILED[*]}"
     exit 1
 fi
