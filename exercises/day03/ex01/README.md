@@ -34,7 +34,7 @@ Your goal is to inspect a program that suffers from a data race due to unsynchro
     while ($thr_idx > 0)
       if ($thr_idx != $thr_main && $thr_idx != $thr_0)
         thread $thr_idx
-        cont
+        cont &
       end
       set $thr_idx = $thr_idx - 1
     end
