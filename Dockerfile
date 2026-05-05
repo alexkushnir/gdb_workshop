@@ -6,6 +6,7 @@ RUN apt-get update && \
     g++ make ninja-build cmake linux-tools-common linux-tools-generic\
     libc6-dev libc6-dbg python3-gi libglib2.0-dev python3-ply linux-tools-common \
     valgrind tcpdump clang-format-18 clang-tidy-18 gdbserver \
+    libboost-all-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN add-apt-repository universe && apt-get update && apt-get install --no-install-recommends -y gcc-14 g++-14
