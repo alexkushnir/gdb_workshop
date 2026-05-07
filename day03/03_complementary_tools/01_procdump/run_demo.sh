@@ -8,9 +8,9 @@ if [ ! -f "$EXECUTABLE" ]; then
     exit 1
 fi
 
-echo "=================================================="
+echo "============================================================="
 echo "ProcDump Memory Spike Demo (OOM Prevention)"
-echo "=================================================="
+echo "============================================================="
 echo "Starting the simulator in the background..."
 $EXECUTABLE &
 SIM_PID=$!
@@ -20,14 +20,14 @@ echo ""
 echo "TO CAPTURE THE MEMORY SPIKE:"
 echo "1. Open another terminal."
 echo "2. Run this ProcDump command:"
-echo "   sudo procdump -M 512 -n 2 -s 3 -p $SIM_PID"
+echo "   sudo procdump -M 512 -n 3 -s 3 -w procdump_demo"
 echo ""
 echo "What this does:"
-echo "-M 512  : Trigger if Memory Commit >= 512 MB"
-echo "-n 2    : Capture 2 dumps (to compare growth)"
+echo "-m 512  : Trigger if Memory Commit >= 512 MB"
+echo "-n 3    : Capture 3 dumps (to compare growth)"
 echo "-s 3    : Spike must last 3 seconds"
-echo "-p      : Specify the PID"
-echo "=================================================="
+echo "-w      : Specify the process name to monitor (procdump_demo)"
+echo "============================================================="
 echo ""
 
 # Keep script running so child doesn't die immediately on some setups, 

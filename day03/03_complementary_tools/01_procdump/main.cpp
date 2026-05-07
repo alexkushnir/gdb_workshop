@@ -31,17 +31,17 @@ int main()
     std::setvbuf(stdout, nullptr, _IONBF, 0);
 
     std::println("ProcDump Memory Spike Simulator (PID: {})", getpid());
-    std::println("==========================================");
+    std::println("=============================================================");
     std::println("Scenario: This process will simulate periodic heap growth.");
     std::println("Every 10 seconds, it will allocate 600MB for 5 seconds.");
-    std::println("==========================================");
+    std::println("=============================================================");
 
     while (true)
     {
         std::println("\n[Phase: Idle] Sleeping for 10 seconds...");
         std::this_thread::sleep_for(std::chrono::seconds(10));
 
-        MemorySpike(5);
+        MemorySpike(10);
         std::println("[Phase: Recovered] Memory released.");
     }
 

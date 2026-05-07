@@ -46,8 +46,8 @@ int main()
     // BREAKPOINT HERE:
     // Notice that Guest's access level is no longer 1.
     // 1. Run to this point.
-    // 2. Check the value: print db[1].access_level
-    // 3. Set a watchpoint: watch db[1].access_level
+    // 2. Check the value: print db[1].m_accessLevel
+    // 3. Set a watchpoint: watch db[1].m_accessLevel
     // 4. Use 'reverse-continue' to find where the value was changed.
     
     if (db[1].m_accessLevel != 1) 
