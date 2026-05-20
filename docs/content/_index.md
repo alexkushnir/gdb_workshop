@@ -41,8 +41,9 @@ Let's get started!
 
 ## Setup the environment
 
-I prepared a Docker image to support the workshop (this way we'll be working in an isolated environment, and it won't matter the OS you use)
-Also, for several examples I will need to use the PMU counters, so a virtual machine will be needed. I used `vagrant` tool, Vagrantfile is attached 
+I prepared a Docker image to support the workshop (this way we'll be working in an isolated environment, and it won't matter the OS you use).
+
+Also, for several examples I will need to use the host PMU counters, so a virtual machine will be needed. I used `vagrant` tool, Vagrantfile is attached.
 
 ## Support code for the Workshop
 
