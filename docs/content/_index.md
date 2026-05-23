@@ -41,7 +41,9 @@ Let's get started!
 
 ## Setup the environment
 
-I prepared a Docker image to support the workshop (this way we'll be working in an isolated environment, and it won't matter the OS you use)
+I prepared a Docker image to support the workshop (this way we'll be working in an isolated environment, and it won't matter the OS you use).
+
+Also, for several examples (especially the `rr` tool) I will need to use the host PMU counters, so a virtual machine will be needed. I used `vagrant` tool, Vagrantfile is attached (the tool also can be installed on the machines in Mobileye, see below). 
 
 ## Support code for the Workshop
 
@@ -59,5 +61,19 @@ To get started quickly, use a pre-configured docker image in one of 2 ways:
   - `docker run -it --rm -v <local-dir>:/mnt alexkushnir1/gdb-workshop:latest`
 
 This image contains all necessary tools pre-installed.
+
+## Installation of the rr tool
+In your machine, type `module load rr/5.7.0`
+
+If you prefer working with VM, see below
+## VM installation
+### Prerequisites: 
+- Download and install Vagrant from [`https://developer.hashicorp.com/vagrant/install`](https://developer.hashicorp.com/vagrant/install)
+- Download and install VMWare Workstation Pro from [`https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion`](https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion)
+
+### Installation: 
+- Clone the course repo
+- From the root directory, type in terminal: `vagrant up`
+- Type `vagrant ssh` and you are logged in. 
 
 ---
