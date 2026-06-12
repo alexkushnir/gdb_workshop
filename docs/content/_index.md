@@ -62,7 +62,7 @@ To get started quickly, use a pre-configured docker image in one of 2 ways:
 
 This image contains all necessary tools pre-installed.
 
-## Installation of the rr tool
+## rr tool installation 
 In your machine, type `module load rr/5.7.0`
 
 If you prefer working with VM, see below
