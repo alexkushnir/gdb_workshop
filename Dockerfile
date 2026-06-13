@@ -1,4 +1,4 @@
-FROM ubuntu:latest AS build-env
+FROM ubuntu:24.04 AS build-env
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y wget ca-certificates gnupg2 software-properties-common \
