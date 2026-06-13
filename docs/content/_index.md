@@ -45,7 +45,7 @@ I prepared a Docker image to support the workshop (this way we'll be working in 
 
 Also, for several examples (especially the `rr` tool) I will need to use the host PMU counters, so a virtual machine will be needed. I used `vagrant` tool, Vagrantfile is attached (the tool also can be installed on the machines in Mobileye, see below). 
 
-## Support code for the Workshop
+## Workshop Code
 
 All code is stored in github repository [`https://github.com/alexkushnir/gdb_workshop`](https://github.com/alexkushnir/gdb_workshop)
 
