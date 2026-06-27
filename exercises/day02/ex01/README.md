@@ -31,7 +31,7 @@ Your goal is to:
 4.  **Find the Core File**:
     Depending on your system's configuration (`/proc/sys/kernel/core_pattern`), the core file may appear as a file named `core` or `core.<pid>` in the current directory.
     
-    If it doesn't appear, your system might be using `systemd-coredump`. You can list最近的 crashes with:
+    If it doesn't appear, your system might be using `systemd-coredump`. You can list crashes with:
     ```bash
     coredumpctl list
     ```
