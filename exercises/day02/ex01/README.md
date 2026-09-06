@@ -42,7 +42,7 @@ Your goal is to:
 
 5.  **Start GDB with the core dump**:
     ```bash
-    gdb ./build/ex01 core
+    gdb ./build/ex01 -c core
     ```
 
 5.  **Observe the missing symbols**:
