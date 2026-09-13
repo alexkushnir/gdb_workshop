@@ -1,0 +1,6 @@
+0x1 PREV_INUSE (P)
+0x2 IS_MMAPPED (M)
+0x4 NON_MAIN_ARENA (A)
+
+ptype /o
+p /r 
