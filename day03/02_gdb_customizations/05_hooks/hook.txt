@@ -1,8 +1,9 @@
 define hook-stop
   echo \n====== STOP ======\n
-  where
+  where 5
   info locals
-  x/5i $pc-5
+  x/-3i $pc
+  x/5i $pc
   list
   echo =================\n
 end
