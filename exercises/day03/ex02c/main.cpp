@@ -4,20 +4,44 @@
 #include <chrono>
 #include <vector>
 #include <list>
-#include <latch>
+#include <condition_variable>
+#include <cstddef>
+#include <mutex>
 #include <atomic>
 #include <memory>
 
 using TIME_UNIT = std::chrono::milliseconds;
+constexpr const char* TIME_UNIT_NAME = "ms";
 // using TIME_UNIT = std::chrono::microseconds;
+// constexpr const char* TIME_UNIT_NAME = "us";
 using time_point = std::chrono::time_point<std::chrono::system_clock>;
+
+// Minimal C++17 replacement for Latch.
+class Latch {
+public:
+    explicit Latch(std::ptrdiff_t count) : count_(count) {}
+    void count_down() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (--count_ == 0) {
+            cv_.notify_all();
+        }
+    }
+    void wait() {
+        std::unique_lock<std::mutex> lock(mutex_);
+        cv_.wait(lock, [this] { return count_ == 0; });
+    }
+private:
+    std::mutex mutex_;
+    std::condition_variable cv_;
+    std::ptrdiff_t count_;
+};
 
 class Task {
     const size_t index;
     const int time;
     const int max_time;
     boost::asio::io_context& ioContext;
-    std::latch& work_done;
+    Latch& work_done;
 
     std::atomic<bool> guard{false};
     int result = -2; // intentionally non-atomic
@@ -32,7 +56,7 @@ class Task {
             auto duration = std::chrono::duration_cast<TIME_UNIT>(now - start);
 
             std::cout << "Timer for task " << task.index
-                      << " expired after " << duration << std::endl;
+                      << " expired after " << duration.count() << TIME_UNIT_NAME << std::endl;
 
             task.result = -1; // <-- unsynchronized write, now dangerous
 
@@ -50,7 +74,7 @@ class Task {
 public:
     Task(size_t index, int time, int max_time,
          boost::asio::io_context& ioContext,
-         std::latch& work_done)
+         Latch& work_done)
         : index(index), time(time), max_time(max_time),
           ioContext(ioContext), work_done(work_done) {}
 
@@ -76,7 +100,7 @@ public:
                           << ", timer already expired and wrote" << std::endl;
             } else {
                 std::cout << "Task " << index
-                          << ", finished and wrote after " << TIME_UNIT(time) << std::endl;
+                          << ", finished and wrote after " << TIME_UNIT(time).count() << TIME_UNIT_NAME << std::endl;
                 work_done.count_down();
             }
         });
@@ -94,7 +118,7 @@ void run_tasks(std::vector<int> task_times,
     auto start = std::chrono::system_clock::now();
 
     const long num_tasks = static_cast<long>(task_times.size());
-    std::latch work_done(num_tasks);
+    Latch work_done(num_tasks);
 
     std::list<Task> tasks;
     size_t task_index = 0;
@@ -110,7 +134,7 @@ void run_tasks(std::vector<int> task_times,
         auto duration = std::chrono::duration_cast<TIME_UNIT>(now - start);
 
         std::cout << "Submitting task " << task_index
-                  << " at time: " << duration << std::endl;
+                  << " at time: " << duration.count() << TIME_UNIT_NAME << std::endl;
         ++task_index;
 
         task.submit(pool);
@@ -134,7 +158,7 @@ int main() {
     boost::asio::io_context ioContext;
     auto workGuard = boost::asio::make_work_guard(ioContext);
 
-    std::jthread ioThread([&ioContext]() {
+    std::thread ioThread([&ioContext]() {
         ioContext.run();
     });
 
@@ -153,5 +177,7 @@ int main() {
 
     auto now = std::chrono::system_clock::now();
     auto duration = std::chrono::duration_cast<TIME_UNIT>(now - start);
-    std::cout << "Total runtime: " << duration << std::endl;
+    std::cout << "Total runtime: " << duration.count() << TIME_UNIT_NAME << std::endl;
+
+    ioThread.join();
 }

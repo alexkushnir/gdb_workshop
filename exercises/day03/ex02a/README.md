@@ -37,7 +37,7 @@ The threads are configured with:
 
 ## Questions to Consider
 - We want to use GDB to simulate different time sharing between threads. Try to simulate a state where the thread finished the task exactly on timeout, creating a valid logical race condition. Use GDB to validate that your assumption about the race condition is correct.
-- What happens to the `std::latch` if a thread is cancelled before it calls `count_down()`? (Look at how `timerHandler` handles this).
+- What happens to the `Latch` if a thread is cancelled before it calls `count_down()`? (Look at how `timerHandler` handles this).
 - Is `PTHREAD_CANCEL_ASYNCHRONOUS` safe for code that allocates memory or uses locks?
 - How does GDB report a thread that has been cancelled?
 

@@ -3,6 +3,7 @@
 #include <array>
 #include <string>
 #include <set>
+#include <tuple>
 
 class Position {
     int row_;
@@ -11,7 +12,16 @@ public:
     Position(int r, int c) : row_(r), col_(c) {}
     int row() const { return row_; }
     int col() const { return col_; }
-    auto operator<=>(const Position& other) const = default;
+    friend bool operator==(const Position& a, const Position& b) {
+        return std::tie(a.row_, a.col_) == std::tie(b.row_, b.col_);
+    }
+    friend bool operator!=(const Position& a, const Position& b) { return !(a == b); }
+    friend bool operator<(const Position& a, const Position& b) {
+        return std::tie(a.row_, a.col_) < std::tie(b.row_, b.col_);
+    }
+    friend bool operator>(const Position& a, const Position& b) { return b < a; }
+    friend bool operator<=(const Position& a, const Position& b) { return !(b < a); }
+    friend bool operator>=(const Position& a, const Position& b) { return !(a < b); }
     auto neighbors() const {
         return std::array{
             Position{row_, col_ + 1},
@@ -111,7 +121,7 @@ class MazeSolver {
         path_.push_back(from);
         if(from == to) return true;
         for (const auto& next : from.neighbors()) {
-            if (!pMaze->isWall(next) && !visited_.contains(next)) {
+            if (!pMaze->isWall(next) && visited_.count(next) == 0) {
                 back_from_bounty_ = nullptr;
                 visited_.insert(next);
                 if (pMaze->isBounty(next)) bounties_.push_back(next);

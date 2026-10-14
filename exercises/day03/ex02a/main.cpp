@@ -5,21 +5,45 @@
 #include <chrono>
 #include <vector>
 #include <list>
-#include <latch>
+#include <condition_variable>
+#include <cstddef>
+#include <mutex>
 
 using TIME_UNIT = std::chrono::milliseconds;
+constexpr const char* TIME_UNIT_NAME = "ms";
 // using TIME_UNIT = std::chrono::microseconds;
+// constexpr const char* TIME_UNIT_NAME = "us";
 using time_point = std::chrono::time_point<std::chrono::system_clock>;
+
+// Minimal C++17 replacement for Latch.
+class Latch {
+public:
+    explicit Latch(std::ptrdiff_t count) : count_(count) {}
+    void count_down() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (--count_ == 0) {
+            cv_.notify_all();
+        }
+    }
+    void wait() {
+        std::unique_lock<std::mutex> lock(mutex_);
+        cv_.wait(lock, [this] { return count_ == 0; });
+    }
+private:
+    std::mutex mutex_;
+    std::condition_variable cv_;
+    std::ptrdiff_t count_;
+};
 
 class Task {
     const size_t index;
     const int time;
     const int max_time;
     boost::asio::io_context& ioContext;
-    std::latch& work_done;
+    Latch& work_done;
     // internal managed vars:
     std::atomic<bool> guard;
-    std::jthread my_thread;
+    std::thread my_thread;
     // task that doesn't finish on time shall got -1
     // otherwise, shall get the time in took to finish
     int result;
@@ -32,7 +56,7 @@ class Task {
             auto now = std::chrono::system_clock::now();
             auto duration = std::chrono::duration_cast<TIME_UNIT>(now - start);
             // print duration that passed
-            std::cout << "Timer for task " << task.index << " expired after " << duration << std::endl;
+            std::cout << "Timer for task " << task.index << " expired after " << duration.count() << TIME_UNIT_NAME << std::endl;
             bool expected = false;
             bool success = task.guard.compare_exchange_strong(expected, true);
             if(!success) {
@@ -48,10 +72,10 @@ class Task {
         }
     }
 public:
-    Task(size_t index, int time, int max_time, boost::asio::io_context& ioContext, std::latch& work_done)
+    Task(size_t index, int time, int max_time, boost::asio::io_context& ioContext, Latch& work_done)
         : index(index), time(time), max_time(max_time), ioContext(ioContext), work_done(work_done) {}
     void run() {
-        my_thread = std::jthread([this] {
+        my_thread = std::thread([this] {
             // allow this thread to be canceled asyncronously from another thread
             pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, nullptr);
             pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, nullptr);            
@@ -76,7 +100,7 @@ public:
                 std::cout << "Task " << index << ", timer already expired and wrote" << std::endl;
             }
             else {
-                std::cout << "Task " << index << ", finished and wrote after " << TIME_UNIT(time) << std::endl;
+                std::cout << "Task " << index << ", finished and wrote after " << TIME_UNIT(time).count() << TIME_UNIT_NAME << std::endl;
                 result = time;
                 work_done.count_down();
             }
@@ -104,7 +128,7 @@ void run_tasks(std::vector<int> task_times, int max_time, boost::asio::io_contex
     auto start = std::chrono::system_clock::now();
 
     const long num_tasks = long(task_times.size());
-    std::latch work_done(num_tasks);
+    Latch work_done(num_tasks);
 
     // initiate tasks
     std::list<Task> tasks;
@@ -120,7 +144,7 @@ void run_tasks(std::vector<int> task_times, int max_time, boost::asio::io_contex
         std::this_thread::sleep_for(TIME_UNIT(50));
         auto now = std::chrono::system_clock::now();
         auto duration = std::chrono::duration_cast<TIME_UNIT>(now - start);
-        std::cout << "Starting task " << task_index << " at time: " << duration << std::endl;
+        std::cout << "Starting task " << task_index << " at time: " << duration.count() << TIME_UNIT_NAME << std::endl;
         ++task_index;
         task.run();
     }
@@ -148,7 +172,7 @@ int main() {
     auto workGuard = boost::asio::make_work_guard(ioContext);
     
     // Run io_context in a separate thread
-    std::jthread ioThread([&ioContext]() {
+    std::thread ioThread([&ioContext]() {
         ioContext.run();
     });
 
@@ -163,5 +187,7 @@ int main() {
     auto now = std::chrono::system_clock::now();
     auto duration = std::chrono::duration_cast<TIME_UNIT>(now - start);
     // print duration that passed
-    std::cout << "Total runtime: " << duration << std::endl;
+    std::cout << "Total runtime: " << duration.count() << TIME_UNIT_NAME << std::endl;
+
+    ioThread.join();
 }

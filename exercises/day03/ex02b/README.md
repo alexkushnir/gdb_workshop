@@ -8,7 +8,7 @@ Understand how tasks are scheduled in a thread pool and use GDB to trigger and a
 
 ## Background
 
-This exercise is the direct successor to [Exercise 02a](../ex02a/README.md). While the previous exercise used raw `std::jthread` and the potentially dangerous `pthread_cancel` for timeouts, this version adopts a more modern and robust approach:
+This exercise is the direct successor to [Exercise 02a](../ex02a/README.md). While the previous exercise used raw `std::thread` and the potentially dangerous `pthread_cancel` for timeouts, this version adopts a more modern and robust approach:
 
 - **Thread Pool**: Uses `boost::asio::thread_pool` instead of manual thread management.
 - **Fixed Capacity**: Tasks are submitted to a pool of a fixed size (3 threads), introducing queuing behavior.

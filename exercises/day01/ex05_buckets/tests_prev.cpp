@@ -1,7 +1,6 @@
 #include <map>
 #include <vector>
 #include <algorithm>
-#include <ranges>
 
 //============================================================
 // Fill the bucket - code to test
@@ -10,7 +9,7 @@
 // example: using 7 twice + 2 three times = 5 operations
 //============================================================
 
-using std::map, std::pair, std::vector, std::ranges::range;
+using std::map, std::pair, std::vector;
 
 using FillPlan = map<size_t, size_t>;
 using FillResult = pair<bool, FillPlan>;
@@ -35,16 +34,17 @@ FillResult canFillRecursive(Bucket big_bucket, const vector<Bucket>& small_bucke
   return {false, {}};
 }
 
-FillResult canFill(Bucket big_bucket, range auto&& small_buckets) {
+template <typename Range>
+FillResult canFill(Bucket big_bucket, Range&& small_buckets) {
   if(big_bucket == 0) return {true, {}};
   if(small_buckets.empty()) return {false, {}};
   // sort a copied vector of the small buckets container
   auto small_buckets_sorted = std::vector(small_buckets.begin(), small_buckets.end());
-  std::ranges::sort(small_buckets_sorted); // now it is sorted!
+  std::sort(small_buckets_sorted.begin(), small_buckets_sorted.end()); // now it is sorted!
   // remove duplicates
-  auto [new_end, end] = std::ranges::unique(small_buckets_sorted);
+  auto new_end = std::unique(small_buckets_sorted.begin(), small_buckets_sorted.end());
   // erase the duplicates from the container
-  small_buckets_sorted.erase(new_end, end);
+  small_buckets_sorted.erase(new_end, small_buckets_sorted.end());
   // remove trailing zero if exists
   if(small_buckets_sorted.back() == 0) small_buckets_sorted.pop_back();
   // call the recursive helper function, starting from index 0

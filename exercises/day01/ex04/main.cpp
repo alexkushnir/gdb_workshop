@@ -1,5 +1,4 @@
 #include <iostream>
-#include <print>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -15,7 +14,7 @@ void RiskyOperation(int value)
     {
         throw std::out_of_range("Value is too large: " + std::to_string(value));
     }
-    std::println("Operation successful with value: {}", value);
+    std::cout << "Operation successful with value: " << value << "\n";
 }
 
 // Function with nested try-catch.
@@ -29,13 +28,13 @@ void ProcessData(const std::vector<int>& data)
         }
         catch (const std::out_of_range& e)
         {
-            std::println(stderr, "Caught a range error: {}", e.what());
+            std::cerr << "Caught a range error: " << e.what() << "\n";
             // Rethrowing to see multiple catchpoints in action.
             throw;
         }
         catch (const std::exception& e)
         {
-            std::println(stderr, "Caught a general error: {}", e.what());
+            std::cerr << "Caught a general error: " << e.what() << "\n";
         }
     }
 }
@@ -44,7 +43,7 @@ int main()
 {
     std::vector<int> data = {10, -5, 50, 150, 20};
 
-    std::println("Starting data processing...");
+    std::cout << "Starting data processing...\n";
 
     try
     {
@@ -52,9 +51,9 @@ int main()
     }
     catch (const std::exception& e)
     {
-        std::println(stderr, "Main caught an unhandled exception: {}", e.what());
+        std::cerr << "Main caught an unhandled exception: " << e.what() << "\n";
     }
 
-    std::println("Processing complete.");
+    std::cout << "Processing complete.\n";
     return 0;
 }

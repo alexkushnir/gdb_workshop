@@ -1,4 +1,4 @@
-#include <print>
+#include <iostream>
 #include <string>
 
 bool validPassword = true;
@@ -8,14 +8,14 @@ bool invalidPassword = false;
 // We ONLY want to break here if an error was just shown.
 void LoadUserProfile(const std::string& username)
 {
-    std::println("Loading private profile data for {}...", username);
+    std::cout << "Loading private profile data for " << username << "...\n";
     // Bug: If we are here after a failed login, we have a security breach!
 }
 
 // TRIGGER FUNCTION: Runs rarely, only when a password is wrong.
 void ShowErrorMessage(const std::string& error)
 {
-    std::println("[ERROR] {}", error);
+    std::cout << "[ERROR] " << error << "\n";
 }
 
 bool ValidatePassword(const std::string& username, bool isValidPassword)
@@ -40,7 +40,7 @@ void ProcessLogin(const std::string& username, bool isValidPassword)
 
 int main()
 {
-    std::println("--- Server Started ---");
+    std::cout << "--- Server Started ---\n";
 
     // Simulate 100 normal, successful logins
     for (int i = 1; i <= 100; ++i)
