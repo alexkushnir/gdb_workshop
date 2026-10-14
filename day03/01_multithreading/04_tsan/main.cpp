@@ -1,5 +1,4 @@
 #include <iostream>
-#include <print>
 #include <pthread.h>
 #include <string>
 #include <thread>
@@ -15,7 +14,7 @@ void WorkerFunc(int id)
     std::string threadName = "Worker-" + std::to_string(id);
     pthread_setname_np(pthread_self(), threadName.c_str());
 
-    std::println("[{}] Started.", threadName);
+    std::cout << "[" << threadName << "] Started.\n";
 
     for (int i = 0; i < 100000; ++i)
     {
@@ -23,7 +22,7 @@ void WorkerFunc(int id)
         sharedCounter++;
     }
 
-    std::println("[{}] Finished.", threadName);
+    std::cout << "[" << threadName << "] Finished.\n";
 }
 
 int main()
@@ -31,14 +30,19 @@ int main()
     // Disable buffering for stdout to ensure we see prints before TSan reports
     std::setvbuf(stdout, nullptr, _IONBF, 0);
 
-    std::println("ThreadSanitizer (TSan) Demo (PID: {})", getpid());
-    std::println("==========================================");
-    std::println("Spawning 2 threads to increment a shared counter WITHOUT synchronization.");
+    std::cout << "ThreadSanitizer (TSan) Demo (PID: " << getpid() << ")\n";
+    std::cout << "==========================================\n";
+    std::cout << "Spawning 2 threads to increment a shared counter WITHOUT synchronization.\n";
 
-    std::vector<std::jthread> threads;
+    std::vector<std::thread> threads;
     for (int i = 0; i < 2; ++i)
     {
         threads.emplace_back(WorkerFunc, i);
+    }
+
+    for (auto& t : threads)
+    {
+        t.join();
     }
 
     return 0;

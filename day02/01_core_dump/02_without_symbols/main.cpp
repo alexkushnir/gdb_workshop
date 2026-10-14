@@ -1,4 +1,4 @@
-#include <print>
+#include <iostream>
 #include <string>
 
 // Simple nested call example that ends in a deliberate null-pointer crash.
@@ -7,7 +7,7 @@
 
 void Crash(int intVar, std::string strVar)
 {
-    std::println("In Crash(): intVar={} strVar={}", intVar, strVar);
+    std::cout << "In Crash(): intVar=" << intVar << " strVar=" << strVar << "\n";
     int* a = nullptr;
     *a = 1; // deliberate crash
 }
@@ -28,7 +28,7 @@ int main()
 {
     int intVar = 5;
     std::string strVar = "Hello";
-    std::println("Starting crash demo: {} {}", intVar, strVar);
+    std::cout << "Starting crash demo: " << intVar << " " << strVar << "\n";
     CrashWrapperWrapper(intVar, strVar);
     return 0;
 }

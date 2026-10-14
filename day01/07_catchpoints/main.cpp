@@ -2,7 +2,7 @@
 #include <functional>
 #include <map>
 #include <optional>
-#include <print>
+#include <iostream>
 #include <scn/scan.h>
 #include <stdexcept>
 #include <sys/wait.h>
@@ -20,66 +20,66 @@ enum class Choice : int
 
 static void TriggerThrow()
 {
-    std::println("Triggering throw...");
+    std::cout << "Triggering throw...\n";
     throw std::runtime_error("This is a test exception");
 }
 
 static void TriggerCatch()
 {
-    std::println("Triggering catch...");
+    std::cout << "Triggering catch...\n";
     try
     {
         TriggerThrow();
     }
     catch (const std::exception& e)
     {
-        std::println("Caught exception: {}", e.what());
+        std::cout << "Caught exception: " << e.what() << "\n";
     }
 }
 
 static void TriggerSegfault()
 {
-    std::println("Triggering SIGSEGV...");
+    std::cout << "Triggering SIGSEGV...\n";
     volatile int* p = nullptr;
     *p = 42;
 }
 
 static void TriggerFork()
 {
-    std::println("Triggering fork...");
+    std::cout << "Triggering fork...\n";
     pid_t pid = fork();
     if (pid == 0)
     {
-        std::println("Child process (PID: {})", getpid());
+        std::cout << "Child process (PID: " << getpid() << ")\n";
         _exit(0);
     }
     else if (pid > 0)
     {
-        std::println("Parent process (PID: {}), created child {}", getpid(), pid);
+        std::cout << "Parent process (PID: " << getpid() << "), created child " << pid << "\n";
         wait(nullptr);
     }
     else
     {
-        std::println(stderr, "Fork failed!");
+        std::cerr << "Fork failed!\n";
     }
 }
 
 static void TriggerExec()
 {
-    std::println("Triggering exec...");
+    std::cout << "Triggering exec...\n";
     execl("/bin/ls", "ls", "-l", NULL);
     perror("execl failed");
 }
 
 static std::optional<Choice> GetUserChoice()
 {
-    std::println("\n--- GDB Catchpoints Demo ---");
-    std::println("1. Throw Exception");
-    std::println("2. Catch Exception");
-    std::println("3. Trigger SIGSEGV");
-    std::println("4. Trigger Fork");
-    std::println("5. Trigger Exec");
-    std::println("0. Exit");
+    std::cout << "\n--- GDB Catchpoints Demo ---\n";
+    std::cout << "1. Throw Exception\n";
+    std::cout << "2. Catch Exception\n";
+    std::cout << "3. Trigger SIGSEGV\n";
+    std::cout << "4. Trigger Fork\n";
+    std::cout << "5. Trigger Exec\n";
+    std::cout << "0. Exit\n";
 
     if (auto result = scn::prompt<int>("Select an option: ", "{}"))
     {
@@ -88,7 +88,7 @@ static std::optional<Choice> GetUserChoice()
     }
     else
     {
-        std::println(stderr, "Error: {}", result.error().msg());
+        std::cerr << "Error: " << result.error().msg() << "\n";
         return std::nullopt;
     }
 }
@@ -110,7 +110,7 @@ int main()
         choice = GetUserChoice();
         if (!choice.has_value())
         {
-            std::println("Invalid option.");
+            std::cout << "Invalid option.\n";
             continue;
         }
         auto handler = handlers.find(choice.value());
@@ -120,7 +120,7 @@ int main()
         }
         else
         {
-            std::println("Unsupported option.");
+            std::cout << "Unsupported option.\n";
         }
     }
     return 0;

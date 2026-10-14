@@ -2,7 +2,7 @@
 #include <functional>
 #include <map>
 #include <optional>
-#include <print>
+#include <iostream>
 #include <scn/scan.h>
 #include <stdlib.h>
 #include <string>
@@ -22,25 +22,25 @@ enum class Choice : int
 
 void SignalHandler(int signum)
 {
-    std::println("Caught signal {} ({})", signum, strsignal(signum));
+    std::cout << "Caught signal " << signum << " (" << strsignal(signum) << ")\n";
 
     if (signum == SIGSEGV || signum == SIGFPE || signum == SIGABRT)
     {
-        std::println("Exiting due to fatal signal.");
+        std::cout << "Exiting due to fatal signal.\n";
         _exit(signum);
     }
 }
 
 static void TriggerSegfault()
 {
-    std::println("Triggering SIGSEGV...");
+    std::cout << "Triggering SIGSEGV...\n";
     volatile int* p = nullptr;
     *p = 42;
 }
 
 static void TriggerFPE()
 {
-    std::println("Triggering SIGFPE...");
+    std::cout << "Triggering SIGFPE...\n";
     volatile int a = 42;
     volatile int b = 0;
     [[maybe_unused]] int c = a / b;
@@ -48,38 +48,38 @@ static void TriggerFPE()
 
 static void TriggerInt()
 {
-    std::println("Triggering SIGINT...");
+    std::cout << "Triggering SIGINT...\n";
     raise(SIGINT);
 }
 
 static void TriggerTerm()
 {
-    std::println("Triggering SIGTERM...");
+    std::cout << "Triggering SIGTERM...\n";
     raise(SIGTERM);
 }
 
 static void TriggerAbort()
 {
-    std::println("Triggering SIGABRT...");
+    std::cout << "Triggering SIGABRT...\n";
     abort();
 }
 
 static void TriggerUsr1()
 {
-    std::println("Triggering SIGUSR1...");
+    std::cout << "Triggering SIGUSR1...\n";
     raise(SIGUSR1);
 }
 
 static std::optional<Choice> GetUserChoice()
 {
-    std::println("\n--- Signal Handler Demo ---");
-    std::println("1. Trigger SIGSEGV");
-    std::println("2. Trigger SIGFPE");
-    std::println("3. Trigger SIGINT");
-    std::println("4. Trigger SIGTERM");
-    std::println("5. Trigger SIGABRT");
-    std::println("6. Trigger SIGUSR1");
-    std::println("0. Exit");
+    std::cout << "\n--- Signal Handler Demo ---\n";
+    std::cout << "1. Trigger SIGSEGV\n";
+    std::cout << "2. Trigger SIGFPE\n";
+    std::cout << "3. Trigger SIGINT\n";
+    std::cout << "4. Trigger SIGTERM\n";
+    std::cout << "5. Trigger SIGABRT\n";
+    std::cout << "6. Trigger SIGUSR1\n";
+    std::cout << "0. Exit\n";
 
     if (auto result = scn::prompt<std::string>("Select an option: ", "{}"))
     {
@@ -91,13 +91,13 @@ static std::optional<Choice> GetUserChoice()
         }
         else
         {
-            std::println(stderr, "Error: Invalid input '{}'", input);
+            std::cerr << "Error: Invalid input '" << input << "'\n";
             return std::nullopt;
         }
     }
     else
     {
-        std::println(stderr, "Error: {}", result.error().msg());
+        std::cerr << "Error: " << result.error().msg() << "\n";
         return std::nullopt;
     }
 }
@@ -131,7 +131,7 @@ int main()
         choice = GetUserChoice();
         if (!choice.has_value())
         {
-            std::println("Invalid option.");
+            std::cout << "Invalid option.\n";
             continue;
         }
         auto handler = handlers.find(choice.value());
@@ -141,7 +141,7 @@ int main()
         }
         else
         {
-            std::println("Unsupported option.");
+            std::cout << "Unsupported option.\n";
         }
     }
     return 0;

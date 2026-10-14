@@ -1,7 +1,8 @@
 #include <memory>
 #include <cstring>
 #include <fstream>
-#include <print>
+#include <iomanip>
+#include <iostream>
 
 struct DataPoint
 {
@@ -32,9 +33,9 @@ int main()
     
     for (const auto& it : buf2)
     {
-        std::print("{:02x} ", it);
+        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(static_cast<unsigned char>(it)) << std::dec << " ";
     }
     
-    std::println("");
+    std::cout << "\n";
     return 0;
 }

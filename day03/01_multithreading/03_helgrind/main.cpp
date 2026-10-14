@@ -1,4 +1,4 @@
-#include <print>
+#include <iostream>
 #include <pthread.h>
 #include <string>
 #include <thread>
@@ -25,17 +25,22 @@ int main()
     // Disable buffering for stdout
     std::setvbuf(stdout, nullptr, _IONBF, 0);
 
-    std::println("Helgrind Data Race Demo (PID: {})", getpid());
-    std::println("========================================");
-    std::println("Spawning 2 threads to increment a shared counter WITHOUT synchronization.");
+    std::cout << "Helgrind Data Race Demo (PID: " << getpid() << ")\n";
+    std::cout << "========================================\n";
+    std::cout << "Spawning 2 threads to increment a shared counter WITHOUT synchronization.\n";
 
-    std::vector<std::jthread> threads;
+    std::vector<std::thread> threads;
     for (int i = 0; i < 2; ++i)
     {
         threads.emplace_back(WorkerFunc, i);
     }
 
-    std::println("Threads started. Helgrind should detect several data races shortly.");
+    std::cout << "Threads started. Helgrind should detect several data races shortly.\n";
+
+    for (auto& t : threads)
+    {
+        t.join();
+    }
 
     return 0;
 }

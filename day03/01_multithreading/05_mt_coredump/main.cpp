@@ -1,5 +1,5 @@
 #include <chrono>
-#include <print>
+#include <iostream>
 #include <pthread.h>
 #include <thread>
 #include <unistd.h>
@@ -12,7 +12,7 @@ void WorkerTask(int id)
     std::string name = "Worker-" + std::to_string(id);
     pthread_setname_np(pthread_self(), name.c_str());
 
-    std::println("[{}] Started. Doing some work...", name);
+    std::cout << "[" << name << "] Started. Doing some work...\n";
 
     int counter = 0;
     while (true)
@@ -21,7 +21,7 @@ void WorkerTask(int id)
         std::this_thread::sleep_for(1s);
         if (counter % 5 == 0)
         {
-            std::println("[{}] Heartbeat: counter is {}", name, counter);
+            std::cout << "[" << name << "] Heartbeat: counter is " << counter << "\n";
         }
     }
 }
@@ -29,16 +29,16 @@ void WorkerTask(int id)
 void CrashingTask()
 {
     pthread_setname_np(pthread_self(), "CrashingThread");
-    std::println("[CrashingThread] Started. I will crash in 3 seconds...");
+    std::cout << "[CrashingThread] Started. I will crash in 3 seconds...\n";
 
     std::this_thread::sleep_for(3s);
 
-    std::println("[CrashingThread] Triggering null pointer dereference now!");
+    std::cout << "[CrashingThread] Triggering null pointer dereference now!\n";
 
     int* ptr = nullptr;
     *ptr = 42; // BOOM!
 
-    std::println("[CrashingThread] This should never be printed.");
+    std::cout << "[CrashingThread] This should never be printed.\n";
 }
 
 int main()
@@ -46,19 +46,19 @@ int main()
     // Disable buffering for stdout
     std::setvbuf(stdout, nullptr, _IONBF, 0);
 
-    std::println("Multithreaded Core Dump Demo (PID: {})", getpid());
-    std::println("==========================================");
-    std::println("Spawning 3 worker threads and 1 thread that will crash.");
+    std::cout << "Multithreaded Core Dump Demo (PID: " << getpid() << ")\n";
+    std::cout << "==========================================\n";
+    std::cout << "Spawning 3 worker threads and 1 thread that will crash.\n";
 
     pthread_setname_np(pthread_self(), "MainThread");
 
-    std::vector<std::jthread> workers;
+    std::vector<std::thread> workers;
     for (int i = 1; i <= 3; ++i)
     {
         workers.emplace_back(WorkerTask, i);
     }
 
-    std::jthread crasher(CrashingTask);
+    std::thread crasher(CrashingTask);
 
     while (true)
     {

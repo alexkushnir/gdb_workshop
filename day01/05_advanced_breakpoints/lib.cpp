@@ -1,6 +1,6 @@
 #include "lib.h"
 
-#include <print>
+#include <iostream>
 
 namespace advanced_breakpoints
 {
@@ -8,7 +8,7 @@ namespace advanced_breakpoints
     {
         for (auto i = 0; i < 10; ++i)
         {
-            std::println("Doing something important at {} iteration", i);
+            std::cout << "Doing something important at " << i << " iteration\n";
         }
     }
 } // namespace advanced_breakpoints

@@ -1,4 +1,4 @@
-#include <print>
+#include <iostream>
 
 class VeryImportantClass
 {
@@ -8,7 +8,7 @@ public:
 
     void DoSomething()
     {
-        std::println("Doing something");
+        std::cout << "Doing something\n";
     }
 };
 
@@ -20,6 +20,6 @@ int main()
     VeryImportantClass obj2;
     obj2.DoSomething();
 
-    std::println("Doing something else");
+    std::cout << "Doing something else\n";
     return 0;
 }

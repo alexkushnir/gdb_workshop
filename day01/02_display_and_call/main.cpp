@@ -1,19 +1,20 @@
 #include "AReallyImportantClass.h"
-#include <print>
+#include <atomic>
+#include <iostream>
 #include <thread>
 
 using namespace std::literals;
-std::stop_source stopSource;
+std::atomic<bool> stopRequested{false};
 
 static void ThreadStopFunc()
 {
-    stopSource.request_stop();
+    stopRequested = true;
 }
 
 int main()
 {
     AReallyImportantClass aric;
-    std::println("Hello, World!");
+    std::cout << "Hello, World!\n";
 
     int a[10];
 
@@ -23,17 +24,16 @@ int main()
     }
 
     auto t = std::thread(
-        [](std::stop_token stopToken)
+        []()
         {
-            while (!stopToken.stop_requested())
+            while (!stopRequested)
             {
-                std::println("Still looping...");
+                std::cout << "Still looping...\n";
                 std::this_thread::sleep_for(1s);
             }
 
-            std::println("Stop was requested");
-        },
-        stopSource.get_token());
+            std::cout << "Stop was requested\n";
+        });
 
     t.join();
 

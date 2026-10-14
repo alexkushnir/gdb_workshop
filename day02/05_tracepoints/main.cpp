@@ -1,6 +1,7 @@
 #include <chrono>
 #include <cmath>
-#include <print>
+#include <iomanip>
+#include <iostream>
 #include <string>
 #include <thread>
 #include <vector>
@@ -16,16 +17,18 @@ void ProcessData(const DataPoint& dp)
 {
     // Break or trace here
     double processed = std::sqrt(std::abs(dp.m_value)) * 2.0;
-    std::println(
-        "Processing ID: {}, Raw: {:.2f}, Processed: {:.2f}", dp.m_id, dp.m_value, processed);
+    std::cout << std::fixed << std::setprecision(2)
+              << "Processing ID: " << dp.m_id << ", Raw: " << dp.m_value
+              << ", Processed: " << processed << "\n"
+              << std::defaultfloat;
 }
 
 int main()
 {
-    std::println("--- GDB Tracepoints Demo ---");
-    std::println("This program generates data points in a loop.");
-    std::println("Tracepoints allow collecting data without stopping the program.");
-    std::println("----------------------------\n");
+    std::cout << "--- GDB Tracepoints Demo ---\n";
+    std::cout << "This program generates data points in a loop.\n";
+    std::cout << "Tracepoints allow collecting data without stopping the program.\n";
+    std::cout << "----------------------------\n\n";
 
     std::vector<DataPoint> repository;
 
@@ -43,6 +46,6 @@ int main()
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
-    std::println("Demo finished.");
+    std::cout << "Demo finished.\n";
     return 0;
 }

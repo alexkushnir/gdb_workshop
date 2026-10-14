@@ -1,5 +1,4 @@
 #include <iostream>
-#include <print>
 #include <vector>
 
 void Swap(int& a, int& b)
@@ -30,21 +29,21 @@ int main()
 {
     std::vector<int> numbers = {64, 34, 25, 12, 22, 11, 90};
 
-    std::println("Original array:");
+    std::cout << "Original array:\n";
     for (int num : numbers)
     {
-        std::print("{} ", num);
+        std::cout << num << " ";
     }
-    std::println("");
+    std::cout << "\n";
 
     BubbleSort(numbers);
 
-    std::println("Sorted array:");
+    std::cout << "Sorted array:\n";
     for (int num : numbers)
     {
-        std::print("{} ", num);
+        std::cout << num << " ";
     }
-    std::println("");
+    std::cout << "\n";
 
     return 0;
 }

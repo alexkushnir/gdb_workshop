@@ -1,6 +1,6 @@
 #include <chrono>
 #include <mutex>
-#include <print>
+#include <iostream>
 #include <pthread.h>
 #include <thread>
 #include <unistd.h>
@@ -13,29 +13,29 @@ std::mutex mutexB;
 void ThreadAFunc()
 {
     pthread_setname_np(pthread_self(), "ThreadA");
-    std::println("[Thread A] Attempting to lock Mutex A...");
+    std::cout << "[Thread A] Attempting to lock Mutex A...\n";
     std::lock_guard<std::mutex> lockA(mutexA);
-    std::println("[Thread A] Mutex A locked. Sleeping to ensure deadlock...");
+    std::cout << "[Thread A] Mutex A locked. Sleeping to ensure deadlock...\n";
 
     std::this_thread::sleep_for(2s);
 
-    std::println("[Thread A] Attempting to lock Mutex B (this will block)...");
+    std::cout << "[Thread A] Attempting to lock Mutex B (this will block)...\n";
     std::lock_guard<std::mutex> lockB(mutexB);
-    std::println("[Thread A] Mutex B locked. (You won't see this)");
+    std::cout << "[Thread A] Mutex B locked. (You won't see this)\n";
 }
 
 void ThreadBFunc()
 {
     pthread_setname_np(pthread_self(), "ThreadB");
-    std::println("[Thread B] Attempting to lock Mutex B...");
+    std::cout << "[Thread B] Attempting to lock Mutex B...\n";
     std::lock_guard<std::mutex> lockB(mutexB);
-    std::println("[Thread B] Mutex B locked. Sleeping to ensure deadlock...");
+    std::cout << "[Thread B] Mutex B locked. Sleeping to ensure deadlock...\n";
 
     std::this_thread::sleep_for(2s);
 
-    std::println("[Thread B] Attempting to lock Mutex A (this will block)...");
+    std::cout << "[Thread B] Attempting to lock Mutex A (this will block)...\n";
     std::lock_guard<std::mutex> lockA(mutexA);
-    std::println("[Thread B] Mutex A locked. (You won't see this)");
+    std::cout << "[Thread B] Mutex A locked. (You won't see this)\n";
 }
 
 int main()
@@ -43,17 +43,18 @@ int main()
     // Disable buffering for stdout
     std::setvbuf(stdout, nullptr, _IONBF, 0);
 
-    std::println("Deadlock Demonstration (PID: {})", getpid());
-    std::println("======================================");
-    std::println("Thread A will lock Mutex A, then try Mutex B.");
-    std::println("Thread B will lock Mutex B, then try Mutex A.");
-    std::println("A deadlock is guaranteed to occur.");
+    std::cout << "Deadlock Demonstration (PID: " << getpid() << ")\n";
+    std::cout << "======================================\n";
+    std::cout << "Thread A will lock Mutex A, then try Mutex B.\n";
+    std::cout << "Thread B will lock Mutex B, then try Mutex A.\n";
+    std::cout << "A deadlock is guaranteed to occur.\n";
 
-    std::jthread t1(ThreadAFunc);
-    std::jthread t2(ThreadBFunc);
+    std::thread t1(ThreadAFunc);
+    std::thread t2(ThreadBFunc);
 
-    // Threads will join automatically on destruction of jthread,
-    // but they will stay deadlocked forever.
+    // The joins will never return: the threads stay deadlocked forever.
+    t1.join();
+    t2.join();
 
     return 0;
 }

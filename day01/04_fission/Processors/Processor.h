@@ -1,6 +1,6 @@
 #pragma once
 #include "../Utils/Heavy.h"
-#include <print>
+#include <iostream>
 #include <string>
 #include <typeinfo>
 #include <vector>
@@ -23,6 +23,6 @@ public:
     }
     void Dump()
     {
-        std::print("Proc size: {}, data: {}\n", m_buffer.size(), m_data.m_name);
+        std::cout << "Proc size: " << m_buffer.size() << ", data: " << m_data.m_name << "\n";
     }
 };

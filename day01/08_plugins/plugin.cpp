@@ -4,7 +4,7 @@
 // which is defined in the host executable (linked with -rdynamic /
 // ENABLE_EXPORTS so its symbols are exported into the dynamic symbol table).
 
-#include <print>
+#include <iostream>
 #include <string_view>
 
 // Declared here so the linker knows the signature; the definition lives in
@@ -14,13 +14,13 @@ extern "C" void HostCallback(std::string_view message);
 
 extern "C" void PluginRun()
 {
-    std::println("[plugin] PluginRun() entered");
+    std::cout << "[plugin] PluginRun() entered\n";
 
     // Call the function that lives in the host executable.
     HostCallback("hello from the plugin!");
 
-    std::println("[plugin] PluginRun() calling HostCallback a second time");
+    std::cout << "[plugin] PluginRun() calling HostCallback a second time\n";
     HostCallback("plugin is done");
 
-    std::println("[plugin] PluginRun() exiting");
+    std::cout << "[plugin] PluginRun() exiting\n";
 }

@@ -1,7 +1,6 @@
 #include <chrono>
 #include <iostream>
 #include <mutex>
-#include <print>
 #include <pthread.h>
 #include <string>
 #include <thread>
@@ -50,7 +49,7 @@ void WorkerAlpha()
     {
         {
             std::lock_guard<std::mutex> lock(coutMutex);
-            std::println("[Worker-Alpha] Loop iteration: {}", counter++);
+            std::cout << "[Worker-Alpha] Loop iteration: " << counter++ << "\n";
         }
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
@@ -63,7 +62,7 @@ void WorkerBeta()
     {
         {
             std::lock_guard<std::mutex> lock(coutMutex);
-            std::println("[Worker-Beta]  Processing step: {}", counter++);
+            std::cout << "[Worker-Beta]  Processing step: " << counter++ << "\n";
         }
         std::this_thread::sleep_for(std::chrono::seconds(2));
     }
@@ -76,7 +75,7 @@ void WorkerGamma()
     {
         {
             std::lock_guard<std::mutex> lock(coutMutex);
-            std::println("[Worker-Gamma] Periodic check: {}", counter++);
+            std::cout << "[Worker-Gamma] Periodic check: " << counter++ << "\n";
         }
         std::this_thread::sleep_for(std::chrono::seconds(3));
     }
@@ -84,8 +83,8 @@ void WorkerGamma()
 
 int main()
 {
-    std::println("Starting multithreaded stop-modes demonstration...");
-    std::println("Process ID: {}", getpid());
+    std::cout << "Starting multithreaded stop-modes demonstration...\n";
+    std::cout << "Process ID: " << getpid() << "\n";
 
     std::vector<std::thread> threads;
 

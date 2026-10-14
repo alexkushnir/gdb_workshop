@@ -1,9 +1,9 @@
 #include <iostream>
-#include <print>
 #include <string>
 #include <vector>
 
 #include <memory>
+#include <utility>
 
 long Fibonacci(int n)
 {
@@ -14,6 +14,8 @@ long Fibonacci(int n)
 
 struct Node
 {
+    Node(int data, std::unique_ptr<Node> next) : m_data(data), m_next(std::move(next)) {}
+
     int m_data;
     std::unique_ptr<Node> m_next;
 };
@@ -23,26 +25,26 @@ void PrintList(const Node* head)
     const Node* current = head;
     while (current)
     {
-        std::println("Node value: {}", current->m_data);
+        std::cout << "Node value: " << current->m_data << "\n";
         current = current->m_next.get();
     }
 }
 
 int main()
 {
-    std::println("GDB Dashboard Demo");
-    std::println("==================");
+    std::cout << "GDB Dashboard Demo\n";
+    std::cout << "==================\n";
 
     // 1. Numeric state
     int n = 7;
     long result = Fibonacci(n);
-    std::println("Fibonacci({}) = {}", n, result);
+    std::cout << "Fibonacci(" << n << ") = " << result << "\n";
 
     // 2. Vector state
     std::vector<std::string> colors = {"Red", "Green", "Blue", "Yellow"};
     for (const auto& color : colors)
     {
-        std::println("Color: {}", color);
+        std::cout << "Color: " << color << "\n";
     }
 
     // 3. Smart Pointer/List state

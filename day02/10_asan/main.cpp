@@ -2,7 +2,7 @@
 #include <functional>
 #include <map>
 #include <optional>
-#include <print>
+#include <iostream>
 #include <scn/scan.h>
 #include <string>
 #include <vector>
@@ -25,17 +25,17 @@ const char* GetStr()
 static void StackOverflow()
 {
     auto str = GetStr();
-    std::println("--- Triggering Stack Buffer Overflow ---");
+    std::cout << "--- Triggering Stack Buffer Overflow ---\n";
     char buffer[100];
-    std::println("Buffer address: {:p}", static_cast<void*>(buffer));
+    std::cout << "Buffer address: " << static_cast<const void*>(static_cast<void*>(buffer)) << "\n";
     // Intentional overflow
     std::strcpy(buffer, str);
-    std::println("Result: {}", buffer);
+    std::cout << "Result: " << buffer << "\n";
 }
 
 static void HeapOverflow()
 {
-    std::println("--- Triggering Heap Buffer Overflow ---");
+    std::cout << "--- Triggering Heap Buffer Overflow ---\n";
     int* array = new int[5];
 
     // Intentional overflow
@@ -45,40 +45,40 @@ static void HeapOverflow()
     }
 
     auto badIndex = 1205; // Accessing far beyond allocated size
-    std::println("Array address: {:p}", static_cast<void*>(array + badIndex));
-    std::println("Result: {}", array[badIndex]); // Accessing far beyond allocated size
+    std::cout << "Array address: " << static_cast<const void*>(static_cast<void*>(array + badIndex)) << "\n";
+    std::cout << "Result: " << array[badIndex] << "\n"; // Accessing far beyond allocated size
     delete[] array;
 }
 
 static void UseAfterFree()
 {
-    std::println("--- Triggering Use-After-Free ---");
+    std::cout << "--- Triggering Use-After-Free ---\n";
     int* ptr = new int(42);
     delete ptr;
     // Intentional use-after-free
-    std::println("Dereferencing freed pointer: {}", *ptr);
+    std::cout << "Dereferencing freed pointer: " << *ptr << "\n";
 }
 
 static void MemoryLeak()
 {
-    std::println("--- Triggering Memory Leak ---");
+    std::cout << "--- Triggering Memory Leak ---\n";
     int* leak = new int[100];
     for (int i = 0; i < 100; ++i)
     {
         leak[i] = i;
     }
     // 'leak' is never deleted
-    std::println("Memory leaked.");
+    std::cout << "Memory leaked.\n";
 }
 
 static std::optional<Choice> GetUserChoice()
 {
-    std::println("\n--- AddressSanitizer Demo ---");
-    std::println("1. Trigger Stack Buffer Overflow");
-    std::println("2. Trigger Heap Buffer Overflow");
-    std::println("3. Trigger Use-After-Free");
-    std::println("4. Trigger Memory Leak");
-    std::println("0. Exit");
+    std::cout << "\n--- AddressSanitizer Demo ---\n";
+    std::cout << "1. Trigger Stack Buffer Overflow\n";
+    std::cout << "2. Trigger Heap Buffer Overflow\n";
+    std::cout << "3. Trigger Use-After-Free\n";
+    std::cout << "4. Trigger Memory Leak\n";
+    std::cout << "0. Exit\n";
 
     if (auto result = scn::prompt<std::string>("Select an option: ", "{}"))
     {
@@ -90,13 +90,13 @@ static std::optional<Choice> GetUserChoice()
         }
         else
         {
-            std::println(stderr, "Error: Invalid input '{}'", input);
+            std::cerr << "Error: Invalid input '" << input << "'\n";
             return std::nullopt;
         }
     }
     else
     {
-        std::println(stderr, "Error: {}", result.error().msg());
+        std::cerr << "Error: " << result.error().msg() << "\n";
         return std::nullopt;
     }
 }
@@ -120,7 +120,7 @@ int main()
         choice = GetUserChoice();
         if (!choice.has_value())
         {
-            std::println("Invalid option.");
+            std::cout << "Invalid option.\n";
             continue;
         }
         auto handler = handlers.find(choice.value());
@@ -130,7 +130,7 @@ int main()
         }
         else
         {
-            std::println("Unsupported option.");
+            std::cout << "Unsupported option.\n";
         }
     }
 

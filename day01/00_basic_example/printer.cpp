@@ -1,8 +1,8 @@
 #include "printer.h"
-#include <print>
+#include <iostream>
 
 void PrintHello()
 {
-    std::println("Hello, world!");
-    std::print(stderr, "error: {}\n", 42);
+    std::cout << "Hello, world!\n";
+    std::cerr << "error: " << 42 << "\n";
 }

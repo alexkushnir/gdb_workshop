@@ -9,7 +9,7 @@
 #include <dlfcn.h>
 
 #include <filesystem>
-#include <print>
+#include <iostream>
 #include <stdexcept>
 #include <string>
 
@@ -17,7 +17,7 @@
 // 'extern "C"' prevents name-mangling so dlsym can also find it if needed.
 extern "C" void HostCallback(std::string_view message)
 {
-    std::println("[host] HostCallback called with: \"{}\"", message);
+    std::cout << "[host] HostCallback called with: \"" << message << "\"\n";
 }
 
 // The plugin exports exactly one entry-point with this signature.
@@ -33,7 +33,7 @@ public:
         {
             throw std::runtime_error(std::string{"dlopen failed: "} + ::dlerror());
         }
-        std::println("[host] Loaded plugin: {}", path.string());
+        std::cout << "[host] Loaded plugin: " << path.string() << "\n";
     }
 
     ~DlHandle()
@@ -93,8 +93,8 @@ int main(int argc, char* argv[])
         pluginPath = argv[1];
     }
 
-    std::println("[host] Plugin demo starting");
-    std::println("[host] Loading plugin from: {}", pluginPath.string());
+    std::cout << "[host] Plugin demo starting\n";
+    std::cout << "[host] Loading plugin from: " << pluginPath.string() << "\n";
 
     try
     {
@@ -102,16 +102,16 @@ int main(int argc, char* argv[])
 
         auto pluginRun = plugin.Resolve<PluginRunFn>("PluginRun");
 
-        std::println("[host] Calling PluginRun()...");
+        std::cout << "[host] Calling PluginRun()...\n";
         pluginRun();
-        std::println("[host] PluginRun() returned");
+        std::cout << "[host] PluginRun() returned\n";
     }
     catch (const std::exception& ex)
     {
-        std::println(stderr, "[host] ERROR: {}", ex.what());
+        std::cerr << "[host] ERROR: " << ex.what() << "\n";
         return 1;
     }
 
-    std::println("[host] Done.");
+    std::cout << "[host] Done.\n";
     return 0;
 }

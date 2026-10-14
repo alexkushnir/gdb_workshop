@@ -1,23 +1,22 @@
 #include <iostream>
 #include <limits>
-#include <print>
 
 void IntegerOverflow()
 {
-    std::println("\n--- Triggering Signed Integer Overflow ---");
+    std::cout << "\n--- Triggering Signed Integer Overflow ---\n";
     int val = std::numeric_limits<int>::max();
-    std::println("Current max int: {}", val);
+    std::cout << "Current max int: " << val << "\n";
     int overflowed = val + 1; // Undefined Behavior
-    std::println("Overflowed result: {}", overflowed);
+    std::cout << "Overflowed result: " << overflowed << "\n";
 }
 
 void ShiftOutOfBounds()
 {
-    std::println("\n--- Triggering Shift Out of Bounds ---");
+    std::cout << "\n--- Triggering Shift Out of Bounds ---\n";
     int val = 1;
     int shift = 32;            // Assuming 32-bit int
     int result = val << shift; // Undefined Behavior
-    std::println("Shift result: {}", result);
+    std::cout << "Shift result: " << result << "\n";
 }
 
 struct Data
@@ -25,13 +24,13 @@ struct Data
     int m_value;
     void Print()
     {
-        std::println("Value: {}", m_value);
+        std::cout << "Value: " << m_value << "\n";
     }
 };
 
 void NullPointerDereference()
 {
-    std::println("\n--- Triggering Null Pointer Dereference ---");
+    std::cout << "\n--- Triggering Null Pointer Dereference ---\n";
     Data* ptr = nullptr;
     // Calling a member function on nullptr is Undefined Behavior
     // (Even if 'this' isn't used immediately, UBSan catches the call)
@@ -40,15 +39,15 @@ void NullPointerDereference()
 
 void DivisionByZero(int denominator)
 {
-    std::println("\n--- Triggering Division by Zero ---");
+    std::cout << "\n--- Triggering Division by Zero ---\n";
     int result = 100 / denominator; // Undefined Behavior if denominator is 0
-    std::println("Result: {}", result);
+    std::cout << "Result: " << result << "\n";
 }
 
 int main(int argc, char** argv)
 {
-    std::println("UndefinedBehaviorSanitizer (UBSan) Demo");
-    std::println("========================================");
+    std::cout << "UndefinedBehaviorSanitizer (UBSan) Demo\n";
+    std::cout << "========================================\n";
 
     IntegerOverflow();
     ShiftOutOfBounds();
@@ -56,6 +55,6 @@ int main(int argc, char** argv)
 
     NullPointerDereference();
 
-    std::println("\nDemo finished (if you see this, UBSan didn't halt execution).");
+    std::cout << "\nDemo finished (if you see this, UBSan didn't halt execution).\n";
     return 0;
 }

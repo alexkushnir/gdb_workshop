@@ -1,5 +1,5 @@
 #include <memory>
-#include <print>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -17,13 +17,13 @@ struct Workplace
 
 void PrintManagerDetails(const Workplace& shop)
 {
-    std::println("--- Workplace Details ---");
-    std::println("Branch: {}", shop.m_branchName);
+    std::cout << "--- Workplace Details ---\n";
+    std::cout << "Branch: " << shop.m_branchName << "\n";
 
     // INTENTIONAL CRASH: Null pointer dereference
     // When analyzing the core dump, 'p shop.manager' will show 0x0.
-    std::println("Manager Name: {}", shop.m_manager->m_name);
-    std::println("Manager Experience: {} years", shop.m_manager->m_experience);
+    std::cout << "Manager Name: " << shop.m_manager->m_name << "\n";
+    std::cout << "Manager Experience: " << shop.m_manager->m_experience << " years\n";
 }
 
 void ProcessWorkplace(const Workplace& shop, int depth)
@@ -46,7 +46,7 @@ void StartProcessing(const std::string& area, int intensity)
 
     std::vector<std::string> tags = {"Retail", "Flagship", "Fashion", "High-Priority"};
 
-    std::println("Processing area: {} with intensity {}", area, intensity);
+    std::cout << "Processing area: " << area << " with intensity " << intensity << "\n";
 
     ProcessWorkplace(londonShop, 3);
 }
@@ -56,7 +56,7 @@ int main()
     std::string rootArea = "Greater London Zone 1";
     int initialIntensity = 42;
 
-    std::println("Starting the application...");
+    std::cout << "Starting the application...\n";
     StartProcessing(rootArea, initialIntensity);
 
     return 0;

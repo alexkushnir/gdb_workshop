@@ -1,5 +1,6 @@
+#include <iomanip>
 #include <iostream>
-#include <print>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -16,12 +17,12 @@ void ProcessOrder(Item& item)
     if (item.m_quantity > 0)
     {
         item.m_quantity--;
-        std::println(
-            "Processed 1 {}, {} remaining at ${}", item.m_name, item.m_quantity, item.m_price);
+        std::cout << "Processed 1 " << item.m_name << ", " << item.m_quantity
+                  << " remaining at $" << item.m_price << "\n";
     }
     else
     {
-        std::println("Out of stock: {}", item.m_name);
+        std::cout << "Out of stock: " << item.m_name << "\n";
     }
 }
 
@@ -42,7 +43,7 @@ int main()
                                    {103, "Doohickey", 5.00, 10},
                                    {104, "Thingamabob", 100.00, 0}};
 
-    std::println("Starting order processor...");
+    std::cout << "Starting order processor...\n";
 
     for (auto& item : inventory)
     {
@@ -50,7 +51,8 @@ int main()
     }
 
     double totalValue = CalculateTotal(inventory);
-    std::println("Total remaining inventory value: ${}", totalValue);
+    std::cout << "Total remaining inventory value: $"
+              << std::setprecision(std::numeric_limits<double>::max_digits10) << totalValue << "\n";
 
     return 0;
 }

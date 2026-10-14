@@ -1,5 +1,4 @@
 #include <iostream>
-#include <print>
 #include <string>
 #include <vector>
 
@@ -11,22 +10,22 @@ struct DataPoint
 
 void ProcessData(const std::vector<DataPoint>& points)
 {
-    std::println("Processing {} data points...", points.size());
+    std::cout << "Processing " << points.size() << " data points...\n";
     for (const auto& p : points)
     {
-        std::println("  Point {}: {}", p.m_id, p.m_label);
+        std::cout << "  Point " << p.m_id << ": " << p.m_label << "\n";
     }
 }
 
 int main()
 {
-    std::println("GDB .gdbinit Customization Demo");
-    std::println("===============================");
+    std::cout << "GDB .gdbinit Customization Demo\n";
+    std::cout << "===============================\n";
 
     std::vector<DataPoint> data = {{101, "Alpha"}, {202, "Beta"}, {303, "Gamma"}};
 
     ProcessData(data);
 
-    std::println("Done.");
+    std::cout << "Done.\n";
     return 0;
 }

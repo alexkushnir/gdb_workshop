@@ -1,5 +1,4 @@
 #include <iostream>
-#include <print>
 #include <string>
 #include <vector>
 
@@ -15,13 +14,13 @@ namespace Workshop
 
 void ProcessPerson(const Workshop::Person& p)
 {
-    std::println("Processing: {} (Age: {})", p.m_name, p.m_age);
+    std::cout << "Processing: " << p.m_name << " (Age: " << p.m_age << ")\n";
 }
 
 int main()
 {
-    std::println("GDB Python Extension Demo");
-    std::println("=========================");
+    std::cout << "GDB Python Extension Demo\n";
+    std::cout << "=========================\n";
 
     Workshop::Person alice{"Alice", 30, true};
     Workshop::Person bob{"Bob", 25, false};
@@ -33,6 +32,6 @@ int main()
     ProcessPerson(alice);
     ProcessPerson(bob);
 
-    std::println("Demo finished.");
+    std::cout << "Demo finished.\n";
     return 0;
 }

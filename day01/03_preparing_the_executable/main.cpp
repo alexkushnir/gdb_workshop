@@ -1,4 +1,4 @@
-#include <print>
+#include <iostream>
 #include <vector>
 
 #define PRINT_HELLO()                                                                              \
@@ -11,7 +11,7 @@
 
 void PrintHello()
 {
-    std::println("Hello, World!");
+    std::cout << "Hello, World!\n";
 }
 
 void InnerFunction(std::vector<int>& vec, int idx)

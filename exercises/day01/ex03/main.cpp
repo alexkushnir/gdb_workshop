@@ -1,5 +1,4 @@
 #include <iostream>
-#include <print>
 #include <vector>
 
 // Recursive function to show off the call stack in VS Code UI.
@@ -31,21 +30,21 @@ void TransformPoints(std::vector<Point>& points)
 int main()
 {
     int n = 8;
-    std::println("Calculating Fibonacci sequence up to {}:", n);
+    std::cout << "Calculating Fibonacci sequence up to " << n << ":\n";
 
     for (int i = 0; i <= n; ++i)
     {
         int result = Fibonacci(i);
-        std::println("fib({}) = {}", i, result);
+        std::cout << "fib(" << i << ") = " << result << "\n";
     }
 
     std::vector<Point> points = {{1, 2}, {3, 4}, {5, 6}};
-    std::println("Transforming points...");
+    std::cout << "Transforming points...\n";
     TransformPoints(points);
 
     for (const auto& p : points)
     {
-        std::println("Point: ({}, {})", p.m_x, p.m_y);
+        std::cout << "Point: (" << p.m_x << ", " << p.m_y << ")\n";
     }
 
     return 0;

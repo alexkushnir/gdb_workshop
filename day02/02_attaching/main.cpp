@@ -1,6 +1,7 @@
 #include <chrono>
-#include <print>
+#include <iostream>
 #include <thread>
+#include <unistd.h>
 
 using namespace std::chrono_literals;
 
@@ -9,11 +10,11 @@ void PrintFunction()
     std::uint64_t counter = 0;
     while (true)
     {
-        std::println("{}: {}", std::this_thread::get_id(), ++counter);
+        std::cout << std::this_thread::get_id() << ": " << ++counter << "\n";
         std::this_thread::sleep_for(1s);
     }
     
-    std::println("Loop finished.");
+    std::cout << "Loop finished.\n";
 }
 
 void PrintFunctioWrapper()
@@ -28,10 +29,10 @@ void PrintFunctionWrapperWrapper()
 
 int main()
 {
-    std::println("=========================================");
-    std::println("Process ID: {}", getpid());
-    std::println("System is running. Attach GDB to inspect.");
-    std::println("=========================================");
+    std::cout << "=========================================\n";
+    std::cout << "Process ID: " << getpid() << "\n";
+    std::cout << "System is running. Attach GDB to inspect.\n";
+    std::cout << "=========================================\n";
     PrintFunctionWrapperWrapper();
     return 0;
 }

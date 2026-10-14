@@ -1,4 +1,4 @@
-#include <print>
+#include <iostream>
 #include <string>
 #include <typeinfo>
 #include <vector>
@@ -6,7 +6,7 @@
 template <typename T>
 void PrintValue(const T& value)
 {
-    std::println("Value: {} (Type: {})", value, typeid(T).name());
+    std::cout << "Value: " << value << " (Type: " << typeid(T).name() << ")\n";
 }
 
 template <typename T>
@@ -18,7 +18,7 @@ public:
     void Add(T other)
     {
         m_value += other;
-        std::println("Updated value: {}", m_value);
+        std::cout << "Updated value: " << m_value << "\n";
     }
 
 private:

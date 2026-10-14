@@ -14,8 +14,8 @@
 //   5. Set DEBUGINFOD_URLS=http://localhost:8002 before launching GDB
 //   → GDB will download the DWARF on demand and show full source / variables.
 
-#include <print>
-#include <span>
+#include <iomanip>
+#include <iostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -47,33 +47,33 @@ static void OuterFunction(int size)
     InnerFunction(vec, static_cast<std::size_t>(size));
 }
 
-// ── Process a span and print a small report ───────────────────────────────────
-static void ProcessData(std::span<const long> data)
+// ── Process a vector and print a small report ───────────────────────────────────
+static void ProcessData(const std::vector<long>& data)
 {
     long sum = 0;
     for (long v : data)
         sum += v;
-    std::println("  data size={}, sum={}, average={:.2f}",
-                 data.size(),
-                 sum,
-                 static_cast<double>(sum) / static_cast<double>(data.size()));
+    std::cout << "  data size=" << data.size() << ", sum=" << sum << ", average="
+              << std::fixed << std::setprecision(2)
+              << static_cast<double>(sum) / static_cast<double>(data.size())
+              << std::defaultfloat << "\n";
 }
 
 // ── main ──────────────────────────────────────────────────────────────────────
 int main()
 {
-    std::println("=== Debuginfod demo ===");
+    std::cout << "=== Debuginfod demo ===\n";
 
     // Collect some Fibonacci numbers so GDB can inspect them.
     constexpr int kCount = 12;
     std::vector<long> fibs;
     fibs.reserve(kCount);
-    std::println("First {} Fibonacci numbers:", kCount);
+    std::cout << "First " << kCount << " Fibonacci numbers:\n";
     for (int i = 0; i < kCount; ++i)
     {
         long f = Fibonacci(i);
         fibs.push_back(f);
-        std::println("  fib({}) = {}", i, f);
+        std::cout << "  fib(" << i << ") = " << f << "\n";
     }
 
     ProcessData(fibs);
@@ -81,7 +81,7 @@ int main()
     // This call intentionally writes one element past the end of the vector.
     // Run the stripped binary under GDB with DEBUGINFOD_URLS set to see full
     // source information fetched automatically from the debuginfod server.
-    std::println("\nCalling OuterFunction(5) — last InnerFunction call is out-of-bounds:");
+    std::cout << "\nCalling OuterFunction(5) — last InnerFunction call is out-of-bounds:\n";
     OuterFunction(5);
 
     return 0;
