@@ -7,8 +7,8 @@
 #   strobj  <string>        raw libstdc++ std::string fields, SSO yes/no
 #   chunk   <ptr>           decode the malloc header in front of a pointer
 #   chunks  <ptr> <n>       walk n consecutive chunks by hand
-#   heapwalk [n]            walk the whole [heap] segment (Python, safe)
-#   bins                    tcache + unsorted bin state
+#   heapwalk [n]            walk the whole [heap]: state, bin, who points here
+#   bins                    every free list (tcache, fast, unsorted, small, large)
 #   unmangle <ptr-to-fd>    undo glibc's tcache/fastbin pointer obfuscation
 #   maps                    the mappings that matter
 #
@@ -180,9 +180,11 @@ end
 #   Fedora/RHEL:   dnf debuginfo-install glibc
 # =========================================================================
 python
+import re
 import gdb
 
 PREV_INUSE, IS_MMAPPED, NON_MAIN_ARENA = 1, 2, 4
+NBINS, NSMALLBINS = 128, 64
 
 
 def _qword(addr):
@@ -212,38 +214,165 @@ def _unmangle(field_addr, stored):
     return (field_addr >> 12) ^ stored
 
 
+# -------------------------------------------------------------------------
+# Free lists.  Each walker yields (payload address, list name).
+# -------------------------------------------------------------------------
+def _walk_tcache():
+    tc = gdb.parse_and_eval("*tcache")
+    for i in range(64):
+        if not int(tc["counts"][i]):
+            continue
+        node, seen = int(tc["entries"][i]), 0
+        while node and seen < 64:
+            yield node, "tcache[%d]" % i
+            node = _unmangle(node, _qword(node))
+            seen += 1
+
+
+def _walk_fastbins():
+    fast = gdb.parse_and_eval("main_arena")["fastbinsY"]
+    for i in range(int(fast.type.range()[1]) + 1):
+        chunk, seen = int(fast[i]), 0
+        while chunk and seen < 64:
+            yield chunk + 16, "fastbin[%d]" % i
+            chunk = _unmangle(chunk + 16, _qword(chunk + 16))
+            seen += 1
+
+
+def _bin_name(i):
+    if i == 1:
+        return "unsorted"
+    if i < NSMALLBINS:
+        return "smallbin[%d]" % i
+    return "largebin[%d]" % i
+
+
+def _walk_bins():
+    """Unsorted, small and large bins: circular lists, fd NOT mangled."""
+    bins = gdb.parse_and_eval("main_arena")["bins"]
+    base = int(bins.address)
+    for i in range(1, NBINS):
+        head = base + (i - 1) * 16 - 16        # bin_at(av, i)
+        chunk, seen = int(bins[(i - 1) * 2]), 0
+        while chunk != head and chunk and seen < 10000:
+            yield chunk + 16, _bin_name(i)
+            chunk = _qword(chunk + 16)
+            seen += 1
+
+
 def _free_set():
     """Map payload address -> which free list it is parked in.
 
     This matters because glibc does NOT clear the next chunk's PREV_INUSE
     bit for tcache/fastbin chunks, so header bits alone say "in use"."""
     out = {}
-    try:
-        tc = gdb.parse_and_eval("*tcache")
-        for i in range(64):
-            if not int(tc["counts"][i]):
-                continue
-            node = int(tc["entries"][i])
-            seen = 0
-            while node and seen < 64:
-                out[node] = "tcache[%d]" % i
-                node = _unmangle(node, _qword(node))
-                seen += 1
-    except gdb.error:
-        pass
-    try:
-        arena = gdb.parse_and_eval("main_arena")
-        fast = arena["fastbinsY"]
-        for i in range(int(fast.type.range()[1]) + 1):
-            chunk = int(fast[i])
-            seen = 0
-            while chunk and seen < 64:
-                out[chunk + 16] = "fastbin[%d]" % i
-                chunk = _unmangle(chunk + 16, _qword(chunk + 16))
-                seen += 1
-    except gdb.error:
-        pass
+    for walker in (_walk_tcache, _walk_fastbins, _walk_bins):
+        try:
+            for payload, name in walker():
+                out[payload] = name
+        except gdb.error:
+            pass
     return out
+
+
+# -------------------------------------------------------------------------
+# Labels: who points into each chunk?
+#   - well-known allocations (tcache, stdio buffers, libstdc++ EH pool)
+#   - the locals of the current frame (or main's, if stopped in stage()),
+#     looking through structs, so std::string / std::vector / smart
+#     pointers are found too
+# -------------------------------------------------------------------------
+_PRETTY = [
+    (r"\._M_dataplus\._M_p$", ".data()"),            # std::string
+    (r"\._M_impl\._M_start$", ".data()"),            # std::vector
+    (r"\._M_refcount\._M_pi$", " (control block)"),  # std::shared_ptr
+    (r"\._M_ptr$", ""),                              # std::shared_ptr
+    (r"\._M_t\._M_t\._M_head_impl$", ""),            # std::unique_ptr
+]
+_SKIP = re.compile(r"\._M_(finish|end_of_storage)$")
+
+
+def _collect(val, path, out, depth):
+    t = val.type.strip_typedefs()
+    if t.code == gdb.TYPE_CODE_PTR:
+        if not _SKIP.search(path):
+            for pat, rep in _PRETTY:
+                path = re.sub(pat, rep, path)
+            out.append((int(val), path))
+    elif t.code in (gdb.TYPE_CODE_REF, gdb.TYPE_CODE_RVALUE_REF):
+        try:
+            _collect(val.referenced_value(), path, out, depth)
+        except gdb.error:
+            pass
+    elif t.code == gdb.TYPE_CODE_STRUCT and depth < 5:
+        for f in t.fields():
+            try:
+                if f.is_base_class:
+                    _collect(val.cast(f.type), path, out, depth + 1)
+                elif getattr(f, "bitpos", None) is not None and f.name:
+                    _collect(val[f], "%s.%s" % (path, f.name), out, depth + 1)
+            except gdb.error:
+                pass
+
+
+def _frame_pointers():
+    out = []
+    try:
+        frame = gdb.selected_frame()
+    except gdb.error:
+        return out
+    if frame.name() == "stage" and frame.older() is not None:
+        frame = frame.older()
+    here = frame.find_sal().line
+    try:
+        block = frame.block()
+    except RuntimeError:
+        return out
+    seen = set()
+    while block is not None:
+        for sym in block:
+            if not (sym.is_variable or sym.is_argument) or sym.name in seen:
+                continue
+            # At -O0 every local has a stack slot from function entry; skip
+            # the ones not initialised yet, their slots hold stale garbage.
+            if sym.is_variable and sym.line and sym.line >= here:
+                continue
+            seen.add(sym.name)
+            try:
+                _collect(sym.value(frame), sym.name, out, 0)
+            except gdb.error:
+                pass
+        if block.function is not None:
+            break
+        block = block.superblock
+    return out
+
+
+def _system_pointers():
+    out = []
+    for expr, name in (
+            ("(long)tcache", "tcache_perthread_struct"),
+            ("(long)'(anonymous namespace)::emergency_pool'.arena",
+             "libstdc++ emergency EH pool"),
+            ("(long)stdout->_IO_buf_base", "stdout buffer"),
+            ("(long)stdin->_IO_buf_base", "stdin buffer"),
+            ("(long)stderr->_IO_buf_base", "stderr buffer")):
+        try:
+            v = int(gdb.parse_and_eval(expr))
+        except gdb.error:
+            continue
+        if v:
+            out.append((v, name))
+    return out
+
+
+def _labels_for(payload, end, pointers):
+    names = []
+    for addr, name in pointers:
+        if payload <= addr < end:
+            off = addr - payload
+            names.append(name if off == 0 else "%s (+%d)" % (name, off))
+    return names
 
 
 def _flagstr(size):
@@ -258,8 +387,9 @@ class HeapWalk(gdb.Command):
     """heapwalk [limit] -- walk every chunk in the main [heap] segment.
 
     Shows each chunk's header address, the payload address your code sees,
-    the rounded chunk size, the three flag bits, and whether the chunk is
-    free (read off the *next* chunk's PREV_INUSE bit)."""
+    the rounded chunk size, the three flag bits, whether the chunk is free
+    (and in which bin), and which locals / known objects point into it.
+    A label like "arr (+8)" means the pointer is 8 bytes into the payload."""
 
     def __init__(self):
         super(HeapWalk, self).__init__("heapwalk", gdb.COMMAND_DATA)
@@ -271,80 +401,93 @@ class HeapWalk(gdb.Command):
             return
         limit = int(arg) if arg.strip() else 1000
         top = _top()
-        print("[heap] 0x%x - 0x%x  (%d KiB)" % (lo, hi, (hi - lo) // 1024))
-        print("%-18s %-18s %8s %5s  %s" %
-              ("chunk", "payload", "size", "flags", "state"))
         parked = _free_set()
+        pointers = _system_pointers() + _frame_pointers()
+        print("[heap] 0x%x - 0x%x  (%d KiB)" % (lo, hi, (hi - lo) // 1024))
+        print("%-16s %-16s %8s %5s  %-18s %s" %
+              ("chunk", "payload", "size", "flags", "state", "pointed to by"))
         cur, n, used, freed = lo, 0, 0, 0
         while cur + 16 <= hi and n < limit:
             size = _qword(cur + 8)
             csize = size & ~7
             if csize == 0:
-                print("%-18s size 0 - stopping" % hex(cur))
+                print("%-16s size 0 - stopping" % hex(cur))
                 break
             if top is not None and cur == top:
-                print("%-18s %-18s %8d %5s  TOP CHUNK (wilderness)" %
-                      (hex(cur), hex(cur + 16), csize, _flagstr(size)))
+                print("%-16s %-16s %8d %5s  %s" %
+                      (hex(cur), hex(cur + 16), csize, _flagstr(size),
+                       "TOP (wilderness)"))
                 break
             nxt = cur + csize
             if nxt + 16 > hi:
-                print("%-18s %-18s %8d %5s  runs to end of segment" %
+                print("%-16s %-16s %8d %5s  runs to end of segment" %
                       (hex(cur), hex(cur + 16), csize, _flagstr(size)))
                 break
             if cur + 16 in parked:
-                state = "FREE  <- %s" % parked[cur + 16]
+                state = "FREE " + parked[cur + 16]
             elif _qword(nxt + 8) & PREV_INUSE:
                 state = "in use"
             else:
-                state = "FREE  <- unsorted/small/large bin"
+                state = "FREE (in a bin)"
             if state == "in use":
                 used += csize
             else:
                 freed += csize
-            print("%-18s %-18s %8d %5s  %s" %
-                  (hex(cur), hex(cur + 16), csize, _flagstr(size), state))
+            labels = ", ".join(_labels_for(cur + 16, nxt, pointers))
+            if n == 1 and not labels and csize >= 65536 and \
+                    not any(l == "libstdc++ emergency EH pool"
+                            for _, l in pointers):
+                labels = "(probably libstdc++'s emergency EH pool;" \
+                         " no libstdc++ debug info to confirm)"
+            print("%-16s %-16s %8d %5s  %-18s %s" %
+                  (hex(cur), hex(cur + 16), csize, _flagstr(size), state,
+                   labels))
             cur, n = nxt, n + 1
         print("-- %d chunks: %d bytes in use, %d bytes free (excl. top)" %
               (n, used, freed))
 
 
 class Bins(gdb.Command):
-    """bins -- show the tcache bins and the unsorted bin."""
+    """bins -- every non-empty free list: tcache, fastbins, unsorted,
+    small and large bins, plus the top chunk and malloc's thresholds."""
 
     def __init__(self):
         super(Bins, self).__init__("bins", gdb.COMMAND_DATA)
 
-    def invoke(self, arg, from_tty):
+    def _show(self, title, walker, sizes):
         try:
-            tc = gdb.parse_and_eval("*tcache")
+            groups = {}
+            for payload, name in walker():
+                groups.setdefault(name, []).append(payload)
         except gdb.error as exc:
-            print("tcache unavailable (%s); install glibc debug info" % exc)
-            tc = None
-        if tc is not None:
-            print("tcache (per-thread, lock-free, 7 chunks max per bin):")
-            empty = True
-            for i in range(64):
-                cnt = int(tc["counts"][i])
-                if cnt:
-                    empty = False
-                    print("  bin[%2d] chunk size %4d : %d entry(ies), head -> %s"
-                          % (i, 32 + 16 * i, cnt, hex(int(tc["entries"][i]))))
-            if empty:
-                print("  (all empty)")
-        try:
-            arena = gdb.parse_and_eval("main_arena")
-        except gdb.error:
-            print("main_arena unavailable; install glibc debug info")
+            print("%s: unavailable (%s) - install glibc debug info" %
+                  (title, exc))
             return
-        unsorted_head = int(arena["bins"][0])
-        bin_addr = int(arena["bins"].address) - 16
-        print("unsorted bin:")
-        if unsorted_head == bin_addr:
-            print("  empty")
-        else:
-            size = _qword(unsorted_head + 8) & ~7
-            print("  first chunk @ %s, size %d" % (hex(unsorted_head), size))
-        print("top chunk @ %s" % hex(int(arena["top"])))
+        print("%s:" % title)
+        if not groups:
+            print("  (all empty)")
+        for name, payloads in groups.items():
+            chain = " -> ".join(
+                "%s[%d]" % (hex(p), _qword(p - 8) & ~7) if sizes else hex(p)
+                for p in payloads)
+            print("  %-13s %d: %s" % (name, len(payloads), chain))
+
+    def invoke(self, arg, from_tty):
+        self._show("tcache (per thread, LIFO, 7 per size, never merged)",
+                   _walk_tcache, True)
+        self._show("fastbins", _walk_fastbins, True)
+        self._show("unsorted / small / large bins  (payload[chunk size])",
+                   _walk_bins, True)
+        try:
+            print("top chunk @ %s, size %d" %
+                  (hex(_top()), _qword(_top() + 8) & ~7))
+            mp = gdb.parse_and_eval("mp_")
+            print("mmap_threshold = %d   trim_threshold = %d   "
+                  "tcache_max_bytes = %d" %
+                  (int(mp["mmap_threshold"]), int(mp["trim_threshold"]),
+                   int(mp["tcache_max_bytes"])))
+        except (gdb.error, TypeError):
+            pass
 
 
 class Unmangle(gdb.Command):
@@ -376,5 +519,3 @@ Bins()
 Unmangle()
 print("heap.gdb loaded: strobj / chunk / chunks / heapwalk / bins / unmangle / maps")
 end
-
-
